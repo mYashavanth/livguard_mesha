@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const authToken = localStorage.getItem("authToken");
   const savedDeviceId = localStorage.getItem("selectedDeviceId") || "MESH0001";
   function fetchData(deviceId) {
-    console.log({ deviceId, authToken });
+    // console.log({ deviceId, authToken });
     fetch(
       `https://dms.meshaenergy.com/apis/dashboard/primary-data/${deviceId}/${authToken}`,
       {
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
         deviceId = localStorage.getItem("selectedDeviceId");
         customerId = localStorage.getItem("customerId");
         document.getElementById('vendorName').innerHTML = customers[parseInt(customerId) - 1];
-        console.log("deviceId", deviceId);
+        // console.log("deviceId", deviceId);
         fetchDistance(deviceId, authToken);
         fetchDeviceIds(customerId, authToken);
         initMap(data.lat, data.long);
@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // export data
         let exportDataBtn = document.getElementById("exportDataBtn");
         exportDataBtn.addEventListener("click", function () {
-          console.log("clicked");
+          // console.log("clicked");
           const link = document.getElementById("downloadLink");
           link.href = `https://dms.meshaenergy.com/apis/download/csv/today/${authToken}`;
           link.click();
@@ -339,7 +339,7 @@ function convertToDecimalDegrees(coordinate) {
   return decimalDegrees;
 }
 function initMap(lat, lng) {
-  console.log(lat, Number(lng));
+  // console.log(lat, Number(lng));
   const location = {
     lat: convertToDecimalDegrees(Number(lat)),
     lng: convertToDecimalDegrees(Number(lng)),
@@ -408,7 +408,7 @@ function fetchDistance(deviceId, authToken) {
   /*if (!deviceId) {
     deviceId = "MESH2099";
   }*/
-  console.log(deviceId, authToken);
+  // console.log(deviceId, authToken);
   fetch(
     `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
     {
@@ -417,7 +417,7 @@ function fetchDistance(deviceId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log("Success:", data);
+      // console.log("Success:", data);
       document.getElementById("distance").innerHTML =
         data[0].distance_in_kms.toFixed(2);
     })
@@ -444,7 +444,7 @@ function chargeDischargeDisplay(deviceId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log("Success: ++++++++++++++++++ ", data);
+      // console.log("Success: ++++++++++++++++++ ", data);
             
             
             // Loop through the data and create table rows

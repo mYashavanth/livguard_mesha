@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const authToken = localStorage.getItem("authToken");
   const customerId = localStorage.getItem("customerId");
   const tableBody = document.getElementsByTagName("tbody");
-  console.log(authToken);
+  // console.log(authToken);
   async function fetchData() {
     try {
       const response = await fetch(
@@ -85,7 +85,7 @@ function convertToDecimalDegrees(coordinate) {
   return decimalDegrees;
 }
 function initMap(lat, lng) {
-  console.log(lat, Number(lng));
+  // console.log(lat, Number(lng));
   const location = {
     lat: convertToDecimalDegrees(Number(lat)),
     lng: convertToDecimalDegrees(Number(lng)),
@@ -142,7 +142,7 @@ function fetchDistance(deviceId, authToken) {
   if (!deviceId) {
     deviceId = "MESH2099";
   }
-  console.log(deviceId, authToken);
+  // console.log(deviceId, authToken);
   fetch(
     `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
     {
