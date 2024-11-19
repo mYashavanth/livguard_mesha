@@ -275,13 +275,13 @@ document.addEventListener("DOMContentLoaded", function () {
           fetchData(event.target.value);
         });
         // export data
-        let exportDataBtn = document.getElementById("exportDataBtn");
-        exportDataBtn.addEventListener("click", function () {
-          // console.log("clicked");
-          const link = document.getElementById("downloadLink");
-          link.href = `https://dms.meshaenergy.com/apis/download/csv/today/${authToken}`;
-          link.click();
-        });
+        // let exportDataBtn = document.getElementById("exportDataBtn");
+        // exportDataBtn.addEventListener("click", function () {
+        //   // console.log("clicked");
+        //   const link = document.getElementById("downloadLink");
+        //   link.href = `https://dms.meshaenergy.com/apis/download/csv/today/${authToken}`;
+        //   link.click();
+        // });
         // export data
       })
       .catch((error) => {
