@@ -137,11 +137,13 @@ function setThreshold(rowData) {
 
       // Set values for each voltage group
       console.log(volData[0]);
-      
+
       const voltageSettings = volData[0];
       voltageGroups.forEach((group, index) => {
-        document.getElementById(`v${index + 1}_low`).value = voltageSettings[`v${index + 1}_low`] || "";
-        document.getElementById(`v${index + 1}_high`).value = voltageSettings[`v${index + 1}_high`] || "";
+        document.getElementById(`v${index + 1}_low`).value =
+          voltageSettings[`v${index + 1}_low`] || "";
+        document.getElementById(`v${index + 1}_high`).value =
+          voltageSettings[`v${index + 1}_high`] || "";
       });
       //  set values for voltageData
       voltageData.v1_low = voltageSettings.v1_low;
@@ -264,6 +266,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log(data);
       const status = "Online";
       tableBody[0].innerHTML = "";
+      fetchDeviceIds(customerId, authToken);
       for (let i = 0; i < data.length; i++) {
         const row = data[i];
         const tableRow = document.createElement("tr");
@@ -316,7 +319,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           </td>
         `;
         fetchDistance(row.device_id, authToken);
-        fetchDeviceIds(customerId, authToken);
         tableBody[0].appendChild(tableRow);
       }
     } catch (error) {
