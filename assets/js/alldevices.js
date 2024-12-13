@@ -293,13 +293,15 @@ document.addEventListener("DOMContentLoaded", async function () {
           <td>${row.current}</td>
           <td id="distance${row.device_id}"></td>
           <td>${row.temperature}</td>
+          <td>${row.current > 5 ? 0 : row.speed}</td>
           <!--<td><button class="btn btn_local_style">View</button></td>-->
-          <td><button class="btn btn_local_style" onclick="openMapModal(${
-            row.lat
-          }, ${row.long})">View</button>
           <td>${formatDate(row.device_log_date)}<br />${
           row.latest_updated_time
         }</td>
+        <td><button class="btn btn_local_style" onclick="openMapModal(${
+          row.lat
+        }, ${row.long})">View</button>
+          </td>
          <td>
           <button 
             type="button" 

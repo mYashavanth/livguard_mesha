@@ -1,19 +1,47 @@
 const authToken = localStorage.getItem("authToken");
 const customerId = localStorage.getItem("customerId");
+const fileInput = document.getElementById("file-input");
+const deviceSelect = document.getElementById("device-select");
+const fileError = document.getElementById("fileError");
+const fileSucessMsg = document.getElementById("fileSucessMsg");
 function handleFileUpload(event) {
   event.preventDefault();
-  const fileInput = document.getElementById("file-input");
-  const deviceSelect = document.getElementById("device-select");
 
-  if (fileInput.files.length > 0 && deviceSelect.value) {
+  let errorMessage = "";
+
+  // Validate select field
+  if (!deviceSelect.value) {
+    errorMessage += "Please select a device ID.\n";
+  }
+
+  // Validate file input
+  if (fileInput.files.length === 0) {
+    errorMessage += "Please select a file.\n";
+  } else if (fileInput.files[0].type !== "text/plain") {
+    errorMessage += "Only .txt files are allowed.\n";
+  }
+
+  // Display errors or proceed
+  if (errorMessage) {
+    fileError.textContent = errorMessage.trim();
+    fileError.style.display = "block";
+  } else {
+    fileError.style.display = "none"; // Hide error message if validation passes
     const file = fileInput.files[0];
     console.log("Selected File:", file);
     console.log("Selected Device ID:", deviceSelect.value);
-    alert(`File: ${file.name} uploaded for Device ID: ${deviceSelect.value}`);
-  } else {
-    alert("Please select both a file and a device ID.");
+    fileSucessMsg.textContent = `File: ${file.name} uploaded for Device ID: ${deviceSelect.value}`;
+    fileSucessMsg.style.display = "block";
   }
 }
+
+function clearErrorMsg() {
+  fileError.textContent = "";
+  fileError.style.display = "none";
+}
+
+deviceSelect.addEventListener("change", clearErrorMsg);
+fileInput.addEventListener("change", clearErrorMsg);
 
 function handleDragOver(event) {
   event.preventDefault();
@@ -41,7 +69,8 @@ function handleDrop(event) {
       dataTransfer.items.add(file);
       fileInput.files = dataTransfer.files; // Sync file input for form submission
     } else {
-      alert("Only .txt files are allowed.");
+      fileError.textContent = "Only .txt files are allowed.";
+      fileError.style.display = "block";
     }
   }
 }
@@ -55,7 +84,8 @@ function handleFileSelect(event) {
     if (file.type === "text/plain") {
       updateFileDetails(file); // Update the UI with file details
     } else {
-      alert("Only .txt files are allowed.");
+      fileError.textContent = "Only .txt files are allowed.";
+      fileError.style.display = "block";
       resetFile();
     }
   }

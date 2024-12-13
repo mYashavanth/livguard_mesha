@@ -50,7 +50,7 @@
               <!-- Icon and Device ID Select -->
               <div class="deviceSelectField">
                 <img src="./assets/img/batterySvg.svg" alt="batterySvg" />
-                <select id="device-select" required></select>
+                <select id="device-select"></select>
               </div>
 
               <!-- Drag and Drop Area -->
@@ -89,7 +89,16 @@
 
                 <i class="bi bi-trash" onclick="resetFile()"></i>
               </div>
-
+              <small
+                class="text-danger"
+                id="fileError"
+                style="display: none"
+              ></small>
+              <small
+                class="text-success"
+                id="fileSucessMsg"
+                style="display: none"
+              ></small>
               <button type="submit" class="btn btn-success">
                 <i class="bi bi-upload"></i> Upload File
               </button>
