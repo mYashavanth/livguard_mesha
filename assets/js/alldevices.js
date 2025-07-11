@@ -273,9 +273,9 @@ const handleVoltageSubmit = async (event) => {
       if (data.errFlag === 0) {
         triggerToast("Threshold updated successfully!", "success");
         closeVoltageModal();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1000);
       } else {
         triggerToast("Not authorized", "error");
         closeVoltageModal();
