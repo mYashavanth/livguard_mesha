@@ -1,3 +1,75 @@
+document.addEventListener("DOMContentLoaded", async function () {
+  const authToken = localStorage.getItem("authToken");
+  const customerId = localStorage.getItem("customerId");
+  const tableBody = document.getElementsByTagName("tbody");
+  console.log(authToken);
+  async function fetchData() {
+    try {
+      const response = await fetch(
+        `https://dms.meshaenergy.com/apis/alldevices/primary-data/${customerId}/${authToken}`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      const status = "Online";
+      tableBody[0].innerHTML = "";
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        const tableRow = document.createElement("tr");
+        //<td>Id : #${customerId}</td>
+        tableRow.innerHTML = `
+          <td onclick="handleDeviceClick('${
+            row.device_id
+          }')" style="cursor: pointer; color: #00b562; text-decoration: underline">${
+          row.device_id
+        }</td>
+          <td>
+            <div class="color_box" style="background-color: ${
+              status === "Online" ? "#00B562" : "#626C70"
+            };">
+              <p>${status}</p>
+            </div>
+          </td>
+          <td>${row.v1}</td>
+          <td>${row.v2}</td>
+          <td>${row.v3}</td>
+          <td>${row.v4}</td>
+          <td>${(
+            Number(row.v1) +
+            Number(row.v2) +
+            Number(row.v3) +
+            Number(row.v4)
+          ).toFixed(2)}</td>
+          <td>${row.current}</td>
+          <td id="distance${row.device_id}"></td>
+          <td>${row.temperature}</td>
+          <!--<td><button class="btn btn_local_style">View</button></td>-->
+          <td><button class="btn btn_local_style" onclick="openMapModal(${
+            row.lat
+          }, ${row.long})">View</button>
+          <td>${formatDate(row.device_log_date)}<br />${
+          row.latest_updated_time
+        }</td>
+          <!--<td>
+            <a href="https://dms.meshaenergy.com/apis/download/csv/today/${
+              row.device_id
+            }/${authToken}" download><button class="icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button></a>
+          </td> -->
+        `;
+        fetchDistance(row.device_id, authToken);
+        fetchDeviceIds(customerId, authToken);
+        tableBody[0].appendChild(tableRow);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  fetchData();
+  setInterval(fetchData, 30000);
+});
+
 const voltageInputValidationMsg = document.getElementById(
   "voltageInputValidationMsg"
 );
@@ -136,7 +208,7 @@ function setThreshold(rowData) {
       }
 
       // Set values for each voltage group
-      console.log(volData[0]);
+      // console.log(volData[0]);
 
       const voltageSettings = volData[0];
       voltageGroups.forEach((group, index) => {
@@ -201,6 +273,9 @@ const handleVoltageSubmit = async (event) => {
       if (data.errFlag === 0) {
         triggerToast("Threshold updated successfully!", "success");
         closeVoltageModal();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         triggerToast("Not authorized", "error");
         closeVoltageModal();
@@ -249,87 +324,14 @@ function closeVoltageModal() {
     modal.hide();
   }
 }
-document.addEventListener("DOMContentLoaded", async function () {
-  const authToken = localStorage.getItem("authToken");
-  const customerId = localStorage.getItem("customerId");
-  const tableBody = document.getElementsByTagName("tbody");
-  // console.log(authToken);
-  async function fetchData() {
-    try {
-      const response = await fetch(
-        `https://dms.meshaenergy.com/apis/alldevices/primary-data/${customerId}/${authToken}`,
-        {
-          method: "GET",
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      const status = "Online";
-      tableBody[0].innerHTML = "";
-      fetchDeviceIds(customerId, authToken);
-      for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        const tableRow = document.createElement("tr");
-        //<td>Id : #${customerId}</td>
-        tableRow.innerHTML = `
-          <td>${row.device_id}</td>
-          <td>
-            <div class="color_box" style="background-color: ${
-              status === "Online" ? "#00B562" : "#626C70"
-            };">
-              <p>${status}</p>
-            </div>
-          </td>
-          <td>${row.v1}</td>
-          <td>${row.v2}</td>
-          <td>${row.v3}</td>
-          <td>${row.v4}</td>
-          <td>${(
-            Number(row.v1) +
-            Number(row.v2) +
-            Number(row.v3) +
-            Number(row.v4)
-          ).toFixed(2)}</td>
-          <td>${row.current}</td>
-          <td id="distance${row.device_id}"></td>
-          <td>${row.temperature}</td>
-          <td>${row.current > 5 ? 0 : row.speed}</td>
-          <!--<td><button class="btn btn_local_style">View</button></td>-->
-          <td>${formatDate(row.device_log_date)}<br />${
-          row.latest_updated_time
-        }</td>
-        <td><button class="btn btn_local_style" onclick="openMapModal(${
-          row.lat
-        }, ${row.long})">View</button>
-          </td>
-         <td>
-          <button 
-            type="button" 
-            data-bs-toggle="modal"
-            data-bs-target="#ThresholdModal"
-            class="btn btn-light" 
-            onclick='setThreshold(${JSON.stringify(row)})'
-          >
-            <i class="bi bi-plus-circle"></i>
-          </button>
-          </td>
-          <td>
-            <!--<button class="icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>-->
-            <a href="https://dms.meshaenergy.com/apis/download/csv/today/${
-              row.device_id
-            }/${authToken}" download><button class="icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button></a>
-          </td>
-        `;
-        fetchDistance(row.device_id, authToken);
-        tableBody[0].appendChild(tableRow);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  fetchData();
-  setInterval(fetchData, 30000);
-});
+
+function handleDeviceClick(deviceId) {
+  // Store the selected device ID in local storage
+  localStorage.setItem("selectedDeviceId", deviceId);
+
+  // Navigate to the dashboard page
+  window.location.href = "dashboard.html"; // or whatever your dashboard page is called
+}
 
 // auth check
 function checkAuth() {
@@ -356,7 +358,7 @@ function convertToDecimalDegrees(coordinate) {
   return decimalDegrees;
 }
 function initMap(lat, lng) {
-  // console.log(lat, Number(lng));
+  console.log(lat, Number(lng));
   const location = {
     lat: convertToDecimalDegrees(Number(lat)),
     lng: convertToDecimalDegrees(Number(lng)),
@@ -413,7 +415,7 @@ function fetchDistance(deviceId, authToken) {
   if (!deviceId) {
     deviceId = "MESH2099";
   }
-  // console.log(deviceId, authToken);
+  console.log(deviceId, authToken);
   fetch(
     `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
     {
@@ -422,7 +424,7 @@ function fetchDistance(deviceId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      // console.log("Success:", data);
+      console.log("Success:", data);
       document.getElementById(`distance${deviceId}`).innerHTML =
         data[0].distance_in_kms.toFixed(2);
     })
@@ -440,7 +442,7 @@ function fetchDeviceIds(customerId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      // console.log("Success:", data);
+      console.log("Success:", data);
       optionsTemplet = ``;
       data.forEach((element) => {
         optionsTemplet += `<option value="${element.device_id}">${element.device_id}</option>`;

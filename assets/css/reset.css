@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Public Sans", sans-serif !important;
+  }
+  #root {
+    display: flex;
+    position: relative;
+  }
+  #main {
+    width: 84%;
+    padding: 40px;
+    background-color: #f5f6f7;
+    min-height: 100vh;
+  }

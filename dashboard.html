@@ -125,6 +125,16 @@
         border-radius: 50%;
       }
 
+      #devices {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        height: 30px;
+        background-color: #efefef;
+        border-radius: 4px;
+        padding: 0 8px;
+      }
       @media (min-width: 768px) {
         .sidebar .offcanvas-lg {
           position: -webkit-sticky;
@@ -265,8 +275,17 @@
     <div class="container-fluid">
       <div class="row">
         <div
-          class="sidebar border border-right col-md-3 col-lg-2 p-0 sd_br_h"
-          style="width: 16%"
+          class="sidebar col-md-3 col-lg-2 p-0 sd_br_h"
+          style="
+            /* border: 1px solid black !important; */
+            height: 100vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            scrollbar-width: thin;
+            width: 16%;
+          "
         >
           <div
             class="offcanvas-md offcanvas-end"
@@ -290,10 +309,16 @@
               <ul class="nav flex-column">
                 <a href="dashboard.html">
                   <img
-                    src="./assets/img/mesha_inc_logo.png"
+                    src="./assets/img/Mesha_inc_logo.png"
                     class="img-fluid sdbr_logo"
                     alt="logo"
-                    style="width: 100%; height: auto"
+                    style="
+                      width: 100%;
+                      height: auto;
+                      padding: 0px 18px;
+                      margin-top: 2px;
+                      /* border: 1px solid black; */
+                    "
                   />
                 </a>
                 <li class="nav-item">
@@ -303,27 +328,11 @@
                     aria-current="page"
                     href="dashboard.html"
                   >
-                    <i class="bi bi-house sd_br_icn"></i> Dashboard .
+                    <i class="bi bi-house sd_br_icn"></i> Dashboard
                   </a>
                 </li>
-                <!-- <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-file-earmark-text"></i> Masters
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="brand_master.html">Brand Master</a></li>
-                                    <li><a class="dropdown-item" href="model_master.html">Model Master</a></li>
-                                    <li><a class="dropdown-item" href="car_parts.html">Parts Category Master</a></li>
-                                    <li><a class="dropdown-item" href="parts_master.html">Parts Master</a></li>
-
-                                </ul>
-                            </li>-->
 
                 <li class="nav-item">
-                  <!-- <a href="dashboard.html">
-                                    <img src="assets/img/location_map.svg" class="img-fluid sdbr_logo" />
-                                </a> -->
                   <a
                     class="nav-link d-flex align-items-center gap-2"
                     href="alldevices.html"
@@ -332,23 +341,29 @@
                     All Devices
                   </a>
                 </li>
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                   <a
                     class="nav-link d-flex align-items-center gap-2"
-                    href="navitem.html"
+                    href="alert_logs.html"
                   >
-                    <i class="bi bi-emoji-expressionless"></i>
-                    NavItem
+                    <i class="bi bi-exclamation-diamond"></i>
+                    Alert Logs
                   </a>
-                </li> -->
-                <!-- <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="vendor_management.html">
-                                    Vendor Management
-                                </a>
-                            </li> -->
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex align-items-center gap-2"
+                    href="reset.html"
+                  >
+                    <i class="bi bi-gear"></i>
+                    Settings
+                  </a>
+                </li>
                 <li class="nav-item" id="logoutBtn">
-                  <a class="nav-link d-flex align-items-center gap-2" href="">
-                    Log out
+                  <a
+                    class="nav-link d-flex align-items-center gap-2"
+                    href="index.html"
+                    ><i class="bi bi-power"></i> Log out
                   </a>
                 </li>
               </ul>
@@ -362,7 +377,7 @@
         >
           <div
             class="container-fluid mt-3 mb-3"
-            style="background-color: #f8f9fa; margin: 0px"
+            style="background-color: white; margin: 0"
           >
             <!-- <div class="row height d-flex align-items-center">
               <div class="col-md-6">
@@ -385,7 +400,7 @@
           <div
             class="container-fluid"
             id="dashboardContainer"
-            style="background-color: #f8f9fa; padding: 20px; margin: 0px"
+            style="background-color: #f8f9fa; padding: 20px"
           >
             <!-- inner html data from dashboard.js -->
             <div class="row">

@@ -182,6 +182,75 @@
         border: 1px solid #626c70;
         border-radius: 50%;
       }
+      #devices {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        height: 30px;
+        background-color: #efefef;
+        border-radius: 4px;
+        padding: 0 8px;
+      }
+      #fromDate,
+      #toDate {
+        border: 1px solid #ddd;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        height: 30px;
+        background-color: #efefef6b;
+        border-radius: 4px;
+        padding: 0 8px;
+      }
+      /* modal styling start */
+      .modalInputs,
+      .thresholdModalInputs {
+        /* border: 1px solid black; */
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 16px;
+      }
+      .modalInput {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .modalInput input:focus,
+      .thresholdModalInput input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border: 1px solid #0d5e36;
+      }
+      .modalInput select:focus,
+      .thresholdModalInput select:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border: 1px solid #0d5e36;
+      }
+      .modal-footer,
+      .thresholdModalFooter {
+        display: flex !important;
+        justify-content: space-between !important;
+        /* border: 1px solid black !important; */
+        padding: 16px 28px !important;
+      }
+      .modal-footer button,
+      .thresholdModalFooter button {
+        min-width: 100px !important;
+      }
+
+      .thresholdModalInputContainer {
+        display: flex;
+        flex-direction: column;
+      }
+      .thresholdModalInputGroup {
+        display: flex;
+        gap: 16px;
+      }
+
+      /* modal styling end */
 
       /* dashboard-sidebar */
 
@@ -278,55 +347,6 @@
       #fileInput {
         display: none;
       }
-      /* modal styling start */
-      .modalInputs,
-      .thresholdModalInputs {
-        /* border: 1px solid black; */
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        padding: 0 16px;
-      }
-      .modalInput {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .modalInput input:focus,
-      .thresholdModalInput input:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        border: 1px solid #0d5e36;
-      }
-      .modalInput select:focus,
-      .thresholdModalInput select:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        border: 1px solid #0d5e36;
-      }
-      .modal-footer,
-      .thresholdModalFooter {
-        display: flex !important;
-        justify-content: space-between !important;
-        /* border: 1px solid black !important; */
-        padding: 16px 28px !important;
-      }
-      .modal-footer button,
-      .thresholdModalFooter button {
-        min-width: 100px !important;
-      }
-
-      .thresholdModalInputContainer {
-        display: flex;
-        flex-direction: column;
-      }
-      .thresholdModalInputGroup {
-        display: flex;
-        gap: 16px;
-      }
-
-      /* modal styling end */
-      
     </style>
   </head>
 
@@ -385,9 +405,19 @@
     <div class="container-fluid">
       <div class="row">
         <div
-          class="sidebar border border-right col-md-3 col-lg-2 p-0 sd_br_h"
-          style="width: 16%"
+          class="sidebar col-md-3 col-lg-2 p-0 sd_br_h"
+          style="
+            /* border: 1px solid black !important; */
+            height: 100vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            scrollbar-width: thin;
+            width: 16%;
+          "
         >
+          <!-- <div class="sidebar border border-right col-md-3 col-lg-2 p-0 sd_br_h"> -->
           <div
             class="offcanvas-md offcanvas-end"
             tabindex="-1"
@@ -410,65 +440,60 @@
               <ul class="nav flex-column">
                 <a href="dashboard.html">
                   <img
-                    src="./assets/img/mesha_inc_logo.png"
+                    src="assets/img/mesha_inc_logo.png"
                     class="img-fluid sdbr_logo"
                     alt="logo"
-                    style="width: 100%; height: auto"
+                    style="
+                      width: 100%;
+                      height: auto;
+                      padding: 0px 18px;
+                      margin-top: 2px;
+                      /* border: 1px solid black; */
+                    "
                   />
                 </a>
                 <li class="nav-item">
                   <a
                     class="nav-link d-flex align-items-center gap-2"
+                    aria-current="page"
                     href="dashboard.html"
                   >
                     <i class="bi bi-house sd_br_icn"></i> Dashboard
                   </a>
                 </li>
-                <!-- <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-file-earmark-text"></i> Masters
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="brand_master.html">Brand Master</a></li>
-                                    <li><a class="dropdown-item" href="model_master.html">Model Master</a></li>
-                                    <li><a class="dropdown-item" href="car_parts.html">Parts Category Master</a></li>
-                                    <li><a class="dropdown-item" href="parts_master.html">Parts Master</a></li>
-
-                                </ul>
-                            </li>-->
-
                 <li class="nav-item">
-                  <!-- <a href="dashboard.html">
-                                    <img src="assets/img/location_map.svg" class="img-fluid sdbr_logo" />
-                                </a> -->
                   <a
                     class="nav-link d-flex align-items-center gap-2 active"
                     style="color: #0d5e36"
-                    aria-current="page"
                     href="alldevices.html"
                   >
                     <i class="bi bi-ev-front"></i>
                     All Devices
                   </a>
                 </li>
-                <!-- <li class="nav-item">
+                <li class="nav-item">
                   <a
                     class="nav-link d-flex align-items-center gap-2"
-                    href="navitem.html"
+                    href="alert_logs.html"
                   >
-                    <i class="bi bi-emoji-expressionless"></i>
-                    NavItem
+                    <i class="bi bi-exclamation-diamond"></i>
+                    Alert Logs
                   </a>
-                </li> -->
-                <!-- <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="vendor_management.html">
-                                    Vendor Management
-                                </a>
-                            </li> -->
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex align-items-center gap-2"
+                    href="reset.html"
+                  >
+                    <i class="bi bi-gear"></i>
+                    Settings
+                  </a>
+                </li>
                 <li class="nav-item" id="logoutBtn">
-                  <a class="nav-link d-flex align-items-center gap-2" href="">
-                    Log out
+                  <a
+                    class="nav-link d-flex align-items-center gap-2"
+                    href="index.html"
+                    ><i class="bi bi-power"></i> Log out
                   </a>
                 </li>
               </ul>
@@ -495,7 +520,7 @@
           <!-- card -->
 
           <div
-            class="container mt-3 mb-3"
+            class="container-fluid mt-3 mb-3"
             style="background-color: white; margin-left: 40px"
           >
             <!-- <div class="row height d-flex align-items-center">
@@ -522,7 +547,7 @@
               border-radius: 2px;
               padding-bottom: 20px;
               border-radius: 10px;
-              padding: 15px;
+              padding: 30px;
             "
           >
             <!-- <div class="row">
@@ -552,6 +577,15 @@
                         <div class="">
                           <h3 class="dh2">Device Diagnostics</h3>
                         </div>
+                        <button
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#ThresholdModal"
+                          class="btn btn-success"
+                          onclick="setThreshold()"
+                        >
+                          <i class="bi bi-plus-square"></i> Set Threshold
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -559,20 +593,20 @@
               </section>
               <!-- table-top -->
 
-              <div class="container-fluid m-2">
+              <p>
                 &nbsp;&nbsp; Generate Reports On Date Range,
                 <select id="devices"></select>
                 &nbsp; From: <input type="text" id="fromDate" /> &nbsp; To:
                 <input type="text" id="toDate" /> &nbsp;
                 <button
-                  class="btn btn-sm btn-danger"
+                  class="btn btn-sm btn-outline-success"
                   onclick="downloadDateBased()"
                 >
                   Download CSV
                 </button>
                 &nbsp;
                 <button
-                  class="btn btn-sm btn-danger"
+                  class="btn btn-sm btn-outline-success"
                   onclick="downloadRangeBased()"
                 >
                   Date Range CSV
@@ -581,7 +615,7 @@
                   id="errMessage"
                   style="color: red; font-size: 10px"
                 ></span>
-              </div>
+              </p>
 
               <div
                 class="container-fluid m-0 p-0"
@@ -605,15 +639,13 @@
                       <th class="tbl_h_bg tbl_th_by">B2</th>
                       <th class="tbl_h_bg tbl_th_by">B3</th>
                       <th class="tbl_h_bg tbl_th_by">B4</th>
-                      <th class="tbl_h_bg tbl_th_by">Bank Voltage</th>
+                      <th class="tbl_h_bg tbl_th_by">Battery Bank Voltage</th>
                       <th class="tbl_h_bg tbl_th_by">A</th>
                       <th class="tbl_h_bg tbl_th_by">D</th>
                       <th class="tbl_h_bg tbl_th_by">T</th>
-                      <th class="tbl_h_bg tbl_th_by">Inst Speed</th>
-                      <th class="tbl_h_bg tbl_th_by">Date/Time</th>
                       <th class="tbl_h_bg tbl_th_by">Location</th>
-                      <th class="tbl_h_bg tbl_th_by">Set Threshold</th>
-                      <th class="tbl_h_bg tbl_th_by">Action</th>
+                      <th class="tbl_h_bg tbl_th_by">Date/Time</th>
+                      <!-- <th class="tbl_h_bg tbl_th_by">Action</th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -959,6 +991,7 @@
       </div>
     </div>
     <!-- Threshold modal end -->
+
     <!-- toast start -->
     <div
       id="toastNotification"
@@ -980,6 +1013,7 @@
     </div>
 
     <!-- toast end -->
+
     <!--modal-->
     <!-- Button trigger modal -->
 
@@ -1194,8 +1228,20 @@
 
     <script>
       $(function () {
-        $("#fromDate").datepicker({ dateFormat: "yy-mm-dd" });
-        $("#toDate").datepicker({ dateFormat: "yy-mm-dd" });
+        // Initialize datepicker with current date as default
+        $("#fromDate").datepicker({
+          dateFormat: "yy-mm-dd",
+          defaultDate: new Date(), // Set default to today
+        });
+        $("#toDate").datepicker({
+          dateFormat: "yy-mm-dd",
+          defaultDate: new Date(), // Set default to today
+        });
+
+        // Set the input values to today's date (formatted as yyyy-mm-dd)
+        const today = $.datepicker.formatDate("yy-mm-dd", new Date());
+        $("#fromDate").val(today);
+        $("#toDate").val(today);
       });
 
       function downloadDateBased() {

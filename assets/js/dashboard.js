@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const authToken = localStorage.getItem("authToken");
   const savedDeviceId = localStorage.getItem("selectedDeviceId") || "MESH0001";
   function fetchData(deviceId) {
-    // console.log({ deviceId, authToken });
+    console.log({ deviceId, authToken });
     fetch(
       `https://dms.meshaenergy.com/apis/dashboard/primary-data/${deviceId}/${authToken}`,
       {
@@ -261,11 +261,12 @@ document.addEventListener("DOMContentLoaded", function () {
         <div id="map" style="height: 700px; width: 100%;"></div>
       </div>
     </div>`;
-        customers = ['Livguard','Mesha','Race','Korakso'];
+        customers = ["Livguard", "Mesha", "Race", "Korakso"];
         deviceId = localStorage.getItem("selectedDeviceId");
         customerId = localStorage.getItem("customerId");
-        document.getElementById('vendorName').innerHTML = customers[parseInt(customerId) - 1];
-        // console.log("deviceId", deviceId);
+        document.getElementById("vendorName").innerHTML =
+          customers[parseInt(customerId) - 1];
+        console.log("deviceId", deviceId);
         fetchDistance(deviceId, authToken);
         fetchDeviceIds(customerId, authToken);
         initMap(data.lat, data.long);
@@ -275,13 +276,13 @@ document.addEventListener("DOMContentLoaded", function () {
           fetchData(event.target.value);
         });
         // export data
-        // let exportDataBtn = document.getElementById("exportDataBtn");
-        // exportDataBtn.addEventListener("click", function () {
-        //   // console.log("clicked");
-        //   const link = document.getElementById("downloadLink");
-        //   link.href = `https://dms.meshaenergy.com/apis/download/csv/today/${authToken}`;
-        //   link.click();
-        // });
+        let exportDataBtn = document.getElementById("exportDataBtn");
+        exportDataBtn.addEventListener("click", function () {
+          console.log("clicked");
+          const link = document.getElementById("downloadLink");
+          link.href = `https://dms.meshaenergy.com/apis/download/csv/today/${authToken}`;
+          link.click();
+        });
         // export data
       })
       .catch((error) => {
@@ -339,7 +340,7 @@ function convertToDecimalDegrees(coordinate) {
   return decimalDegrees;
 }
 function initMap(lat, lng) {
-  // console.log(lat, Number(lng));
+  console.log(lat, Number(lng));
   const location = {
     lat: convertToDecimalDegrees(Number(lat)),
     lng: convertToDecimalDegrees(Number(lng)),
@@ -390,13 +391,13 @@ function fetchDeviceIds(customerId, authToken) {
         optionsTemplet += `<option value="${element.device_id}">${element.device_id}</option>`;
       });
       document.getElementById("devices").innerHTML = optionsTemplet;
-      
-        let currentDeviceId = localStorage.getItem("selectedDeviceId");
-        if (!currentDeviceId) {
-            localStorage.setItem("selectedDeviceId", data[0].device_id);
-        }
-         document.getElementById("devices").value = localStorage.getItem("selectedDeviceId");
-         
+
+      let currentDeviceId = localStorage.getItem("selectedDeviceId");
+      if (!currentDeviceId) {
+        localStorage.setItem("selectedDeviceId", data[0].device_id);
+      }
+      document.getElementById("devices").value =
+        localStorage.getItem("selectedDeviceId");
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -404,11 +405,10 @@ function fetchDeviceIds(customerId, authToken) {
 }
 
 function fetchDistance(deviceId, authToken) {
-    
   /*if (!deviceId) {
     deviceId = "MESH2099";
   }*/
-  // console.log(deviceId, authToken);
+  console.log(deviceId, authToken);
   fetch(
     `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
     {
@@ -417,25 +417,29 @@ function fetchDistance(deviceId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      // console.log("Success:", data);
+      console.log("Success:", data);
       document.getElementById("distance").innerHTML =
         data[0].distance_in_kms.toFixed(2);
     })
     .catch((error) => {
       console.error("Error:", error);
     });
-    
-    chargeDischargeDisplay(localStorage.getItem("selectedDeviceId"),localStorage.getItem("authToken"));
+
+  chargeDischargeDisplay(
+    localStorage.getItem("selectedDeviceId"),
+    localStorage.getItem("authToken")
+  );
 }
 
-
-chargeDischargeDisplay(localStorage.getItem("selectedDeviceId"),localStorage.getItem("authToken"));
+chargeDischargeDisplay(
+  localStorage.getItem("selectedDeviceId"),
+  localStorage.getItem("authToken")
+);
 
 function chargeDischargeDisplay(deviceId, authToken) {
-    
-   var tableBody = document.getElementById('data-table-body');
-   tableBody.innerHTML = '';
-    
+  var tableBody = document.getElementById("data-table-body");
+  tableBody.innerHTML = "";
+
   fetch(
     `https://dms.meshaenergy.com/apis/dashboard/charge_discharge/csv/date-range/${deviceId}/${authToken}`,
     {
@@ -444,13 +448,11 @@ function chargeDischargeDisplay(deviceId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      // console.log("Success: ++++++++++++++++++ ", data);
-            
-            
-            // Loop through the data and create table rows
-            data.forEach(item => {
-                
-                const row = `
+      console.log("Success: ++++++++++++++++++ ", data);
+
+      // Loop through the data and create table rows
+      data.forEach((item) => {
+        const row = `
                     <tr>
                         <td>${item["Cycle Type"]}</td>
                         <td>${item["Date Time - From"]}</td>
@@ -470,8 +472,7 @@ function chargeDischargeDisplay(deviceId, authToken) {
                     </tr>
                 `;
         tableBody.innerHTML += row; // Append the row to the table
-        });
-    
+      });
     })
     .catch((error) => {
       console.error("Error:", error);
