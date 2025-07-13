@@ -66,6 +66,27 @@
         /* border: 1px solid black; */
         background-color: #ecfff6;
       }
+      /* Add these styles to your existing style section */
+      #main {
+        /* margin-left: 16%; */
+        padding: 20px;
+        min-height: 100vh;
+        background-color: #f8f9fa;
+      }
+
+      .card {
+        border-radius: 10px;
+        border: none;
+      }
+
+      .toggle-password {
+        border-top-right-radius: 0.375rem !important;
+        border-bottom-right-radius: 0.375rem !important;
+      }
+
+      .invalid-feedback {
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -115,7 +136,121 @@
           </li>
         </ul>
       </div>
-      <main id="main"></main>
+      <main id="main">
+        <div class="container py-5">
+          <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+              <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom-0 pt-4">
+                  <h2 class="h4 text-center mb-0">Reset Password</h2>
+                </div>
+                <div class="card-body px-5 py-4">
+                  <form id="resetPasswordForm">
+                    <div class="mb-3">
+                      <label for="oldPassword" class="form-label"
+                        >Current Password</label
+                      >
+                      <div class="input-group">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="oldPassword"
+                          required
+                          placeholder="Enter current password"
+                        />
+                        <button
+                          class="btn btn-outline-secondary toggle-password"
+                          type="button"
+                          data-target="oldPassword"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        id="oldPasswordFeedback"
+                      ></div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="newPassword" class="form-label"
+                        >New Password</label
+                      >
+                      <div class="input-group">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="newPassword"
+                          required
+                          placeholder="Enter new password"
+                        />
+                        <button
+                          class="btn btn-outline-secondary toggle-password"
+                          type="button"
+                          data-target="newPassword"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        id="newPasswordFeedback"
+                      ></div>
+                      <small class="form-text text-muted">
+                        Password must be at least 8 characters long and contain
+                        at least one uppercase letter, one lowercase letter, one
+                        number, and one special character.
+                      </small>
+                    </div>
+
+                    <div class="mb-4">
+                      <label for="confirmPassword" class="form-label"
+                        >Confirm New Password</label
+                      >
+                      <div class="input-group">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="confirmPassword"
+                          required
+                          placeholder="Confirm new password"
+                        />
+                        <button
+                          class="btn btn-outline-secondary toggle-password"
+                          type="button"
+                          data-target="confirmPassword"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </div>
+                      <div
+                        class="invalid-feedback"
+                        id="confirmPasswordFeedback"
+                      ></div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="submitBtn"
+                      >
+                        <span id="submitText">Reset Password</span>
+                        <span
+                          id="submitSpinner"
+                          class="spinner-border spinner-border-sm d-none"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
       <!-- toast start -->
       <div
         id="toastNotification"
