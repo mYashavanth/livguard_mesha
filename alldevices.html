@@ -39,7 +39,8 @@
       src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
     ></script>
     <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
-
+    <!-- ag-grid -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <style>
       body {
         background-color: #f8f9fa;
@@ -130,14 +131,24 @@
       }
 
       .btn_local_style {
-        border: 2px solid #00b562;
-        color: #00b562;
-        padding: 1px, 3px;
+        border: 1px solid lightgray;
+        color: gray;
+        padding: 1px 8px;
       }
 
       .btn_local_style:hover {
         background-color: #ecfff6;
-        border: 2px solid #00b562;
+        border: 1.5px solid #00b562;
+        color: #00b562;
+      }
+      .download-button {
+        border: 1px solid lightgray;
+        border-radius: 50%;
+        padding: 4px 8px;
+      }
+      .download-button:hover {
+        background-color: #f8f9fa;
+        border: 1px solid lightgray !important;
       }
 
       .color_box {
@@ -182,75 +193,6 @@
         border: 1px solid #626c70;
         border-radius: 50%;
       }
-      #devices {
-        border: none;
-        outline: none;
-        font-size: 16px;
-        font-weight: 500;
-        height: 30px;
-        background-color: #efefef;
-        border-radius: 4px;
-        padding: 0 8px;
-      }
-      #fromDate,
-      #toDate {
-        border: 1px solid #ddd;
-        outline: none;
-        font-size: 16px;
-        font-weight: 500;
-        height: 30px;
-        background-color: #efefef6b;
-        border-radius: 4px;
-        padding: 0 8px;
-      }
-      /* modal styling start */
-      .modalInputs,
-      .thresholdModalInputs {
-        /* border: 1px solid black; */
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        padding: 0 16px;
-      }
-      .modalInput {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .modalInput input:focus,
-      .thresholdModalInput input:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        border: 1px solid #0d5e36;
-      }
-      .modalInput select:focus,
-      .thresholdModalInput select:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        border: 1px solid #0d5e36;
-      }
-      .modal-footer,
-      .thresholdModalFooter {
-        display: flex !important;
-        justify-content: space-between !important;
-        /* border: 1px solid black !important; */
-        padding: 16px 28px !important;
-      }
-      .modal-footer button,
-      .thresholdModalFooter button {
-        min-width: 100px !important;
-      }
-
-      .thresholdModalInputContainer {
-        display: flex;
-        flex-direction: column;
-      }
-      .thresholdModalInputGroup {
-        display: flex;
-        gap: 16px;
-      }
-
-      /* modal styling end */
 
       /* dashboard-sidebar */
 
@@ -347,6 +289,96 @@
       #fileInput {
         display: none;
       }
+      /* modal styling start */
+      .modalInputs,
+      .thresholdModalInputs {
+        /* border: 1px solid black; */
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 16px;
+      }
+      .modalInput {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .modalInput input:focus,
+      .thresholdModalInput input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border: 1px solid #0d5e36;
+      }
+      .modalInput select:focus,
+      .thresholdModalInput select:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border: 1px solid #0d5e36;
+      }
+      .modal-footer,
+      .thresholdModalFooter {
+        display: flex !important;
+        justify-content: space-between !important;
+        /* border: 1px solid black !important; */
+        padding: 16px 28px !important;
+      }
+      .modal-footer button,
+      .thresholdModalFooter button {
+        min-width: 100px !important;
+      }
+
+      .thresholdModalInputContainer {
+        display: flex;
+        flex-direction: column;
+      }
+      .thresholdModalInputGroup {
+        display: flex;
+        gap: 16px;
+      }
+
+      /* modal styling end */
+      #devices {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        font-weight: 500;
+        height: 30px;
+        background-color: #efefef;
+        border-radius: 4px;
+        padding: 0 8px;
+      }
+
+      /* ag grid styles start */
+      #myGrid {
+        position: sticky;
+        top: 0;
+      }
+      .ag-root-wrapper {
+        border-radius: 0 0 8px 8px;
+        border: none !important;
+        border-top: 1px solid #ddd !important;
+      }
+      .ag-body .ag-layout-auto-height {
+        /* border: 1px solid black !important; */
+        height: 86vh;
+        overflow-y: auto;
+      }
+      .ag-header {
+        /* border: 1px solid black; */
+        background-color: #f8f9f9 !important;
+        position: sticky !important;
+        top: 0 !important;
+      }
+      .ag-header-cell-label {
+        font-family: "Public Sans", sans-serif !important;
+        font-weight: 700;
+      }
+
+      .ag-cell {
+        font-family: "Public Sans", sans-serif !important;
+        font-size: 14px;
+      }
+      /* ag grid styles end */
     </style>
   </head>
 
@@ -520,7 +552,7 @@
           <!-- card -->
 
           <div
-            class="container-fluid mt-3 mb-3"
+            class="container mt-3 mb-3"
             style="background-color: white; margin-left: 40px"
           >
             <!-- <div class="row height d-flex align-items-center">
@@ -547,7 +579,7 @@
               border-radius: 2px;
               padding-bottom: 20px;
               border-radius: 10px;
-              padding: 30px;
+              padding: 15px;
             "
           >
             <!-- <div class="row">
@@ -593,7 +625,7 @@
               </section>
               <!-- table-top -->
 
-              <p>
+              <div class="container-fluid" style="padding: 10px">
                 &nbsp;&nbsp; Generate Reports On Date Range,
                 <select id="devices"></select>
                 &nbsp; From: <input type="text" id="fromDate" /> &nbsp; To:
@@ -615,7 +647,7 @@
                   id="errMessage"
                   style="color: red; font-size: 10px"
                 ></span>
-              </p>
+              </div>
 
               <div
                 class="container-fluid m-0 p-0"
@@ -627,196 +659,34 @@
                 "
               >
                 <!--TABLE-->
-                <table class="table tbl_mb table_tal">
+                <!-- <table class="table tbl_mb table_tal">
                   <thead class="tbl_h1">
                     <tr>
-                      <!--<th class="tbl_h_bg tbl_th_by">Vendore Name</th> -->
                       <th class="tbl_h_bg tbl_th_by">Device</th>
                       <th class="tbl_h_bg tbl_th_by">Status</th>
-                      <!-- <th class="tbl_h_bg tbl_th_by">Alert</th> -->
-                      <!-- <th class="tbl_h_bg tbl_th_by">BV</th> -->
+                      <th class="tbl_h_bg tbl_th_by">Alert</th>
                       <th class="tbl_h_bg tbl_th_by">B1</th>
                       <th class="tbl_h_bg tbl_th_by">B2</th>
                       <th class="tbl_h_bg tbl_th_by">B3</th>
                       <th class="tbl_h_bg tbl_th_by">B4</th>
-                      <th class="tbl_h_bg tbl_th_by">Battery Bank Voltage</th>
+                      <th class="tbl_h_bg tbl_th_by">Bank Vtg</th>
                       <th class="tbl_h_bg tbl_th_by">A</th>
                       <th class="tbl_h_bg tbl_th_by">D</th>
                       <th class="tbl_h_bg tbl_th_by">T</th>
-                      <th class="tbl_h_bg tbl_th_by">Location</th>
+                      <th class="tbl_h_bg tbl_th_by">Inst Speed</th>
                       <th class="tbl_h_bg tbl_th_by">Date/Time</th>
-                      <!-- <th class="tbl_h_bg tbl_th_by">Action</th> -->
+                      <th class="tbl_h_bg tbl_th_by">Location</th>
+                      <th class="tbl_h_bg tbl_th_by">Action</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <!-- Add table rows here -->
-                    <!-- <tr>
-                    <td>Vendor Name</td>
-                    <td>M4</td>
-                    <td>
-                      <div class="color_box" style="background-color: #00B562;">
-                        <p>Online</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="container round_container m-0 p-0" style="background-color: #00B562;">
-                      </div>
-                    </td>
-                    <td>49.47</td>
-                    <td>13.03</td>
-                    <td>12.72</td>
-                    <td>12.92</td>
-                    <td>12.73</td>
-                    <td>0.01</td>
-                    <td>55.70</td>
-                    <td>33.70</td>
-                    <td>
-                      <button class="btn btn_local_style">View</button>
-                    </td>
-                    <td>
-                      23/12/2024 <br />
-                      6:30 PM
-                    </td>
-                    <td>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button>
-                    </td>
-                  </tr> -->
-                    <!-- <tr>
-                    <td>Vendor Name</td>
-                    <td>M4</td>
-                    <td>
-                      <div class="color_box" style="background-color: #00B562;">
-                        <p>Online</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="container round_container m-0 p-0" style="background-color: #00B562;">
-                      </div>
-                    </td>
-                    <td>49.47</td>
-                    <td>13.03</td>
-                    <td>12.72</td>
-                    <td>12.92</td>
-                    <td>12.73</td>
-                    <td>0.01</td>
-                    <td>55.70</td>
-                    <td>33.70</td>
-                    <td>
-                      <button class="btn btn_local_style">View</button>
-                    </td>
-                    <td>
-                      23/12/2024 <br />
-                      6:30 PM
-                    </td>
-                    <td>
-                      <button class="btn icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>
-                      <button class="btn icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Vendor Name</td>
-                    <td>M4</td>
-                    <td>
-                      <div class="color_box" style="background-color: #626C70;">
-                        <p>Offline</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="container round_container m-0 p-0" style="background-color: #626C70;">
-                      </div>
-                    </td>
-                    <td>49.47</td>
-                    <td>13.03</td>
-                    <td>12.72</td>
-                    <td>12.92</td>
-                    <td>12.73</td>
-                    <td>0.01</td>
-                    <td>55.70</td>
-                    <td>33.70</td>
-                    <td>
-                      <button class="btn btn_local_style">View</button>
-                    </td>
-                    <td>
-                      23/12/2024 <br />
-                      6:30 PM
-                    </td>
-                    <td>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Vendor Name</td>
-                    <td>M4</td>
-                    <td>
-                      <div class="color_box" style="background-color: #2E89FD;">
-                        <p>Completed</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="container round_container m-0 p-0" style="background-color: #2E89FD;">
-                      </div>
-                    </td>
-                    <td>49.47</td>
-                    <td>13.03</td>
-                    <td>12.72</td>
-                    <td>12.92</td>
-                    <td>12.73</td>
-                    <td>0.01</td>
-                    <td>55.70</td>
-                    <td>33.70</td>
-                    <td>
-                      <button class="btn btn_local_style"
-                        onclick="return window.location.href = 'dashboard2.html'">View</button>
-                    </td>
-                    <td>
-                      23/12/2024 <br />
-                      6:30 PM
-                    </td>
-                    <td>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Vendor Name</td>
-                    <td>M4</td>
-                    <td>
-                      <div class="color_box" style="background-color: #626C70;">
-                        <p>Offline</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="container round_container m-0 p-0" style="background-color: #00B562;">
-                      </div>
-                    </td>
-                    <td>49.47</td>
-                    <td>13.03</td>
-                    <td>12.72</td>
-                    <td>12.92</td>
-                    <td>12.73</td>
-                    <td>0.01</td>
-                    <td>55.70</td>
-                    <td>33.70</td>
-                    <td>
-                      <button class="btn btn_local_style">View</button>
-                    </td>
-                    <td>
-                      23/12/2024 <br />
-                      6:30 PM
-                    </td>
-                    <td>
-                      <button class="icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>
-                      <button class="icon_button" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
-                          style="color: #626C70;" class="bi bi-download"></i></button>
-                    </td>
-                  </tr> -->
-
-                    <!-- Add more rows as needed -->
-                  </tbody>
-                </table>
+                  <tbody></tbody>
+                </table> -->
                 <!--TABLE-->
+                <div
+                  id="myGrid"
+                  class="ag-theme-quartz"
+                  style="width: 100%"
+                ></div>
               </div>
             </div>
           </div>
@@ -991,7 +861,6 @@
       </div>
     </div>
     <!-- Threshold modal end -->
-
     <!-- toast start -->
     <div
       id="toastNotification"
@@ -1013,7 +882,6 @@
     </div>
 
     <!-- toast end -->
-
     <!--modal-->
     <!-- Button trigger modal -->
 
@@ -1302,7 +1170,7 @@
         }
 
         window.location.href =
-          "https://dms.meshaenergy.com/apis/download/charge_discharge/csv/date-range/" +
+          "https://dms.meshaenergy.com/apis/download/v1/charge_discharge/csv/date-range/" +
           deviceId +
           "/" +
           fromDate +
@@ -1315,4 +1183,5 @@
   </body>
 </html>
 <script src="assets/js/alldevices.js"></script>
+<script src="./assets/js/module_permission.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDimDjoGeaoSdHBzihrmYnscbcALzfFQ24&callback=initMap"></script>

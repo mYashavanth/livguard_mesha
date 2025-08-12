@@ -635,14 +635,14 @@ input[type="color"]:focus,
     font-weight: 500;
     line-height: 20px;
   }
-    .sidebar .nav-link:hover {
-        color: #0d5e36;
-        font-family: "Public Sans", sans-serif;
-        font-size: 18px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: 20px;
-    }
+  .sidebar .nav-link:hover {
+    color: #0d5e36;
+    font-family: "Public Sans", sans-serif;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+  }
 
   .sidebar .nav-link {
     font-family: "Public Sans", sans-serif;
@@ -1508,4 +1508,68 @@ input[type="color"]:focus,
     margin-right: 5px;
   }
   /* multi-check */
+}
+.nav-item:hover a,
+.nav-item:hover i {
+  color: #0d5e36 !important;
+}
+.paginationWithHeading {
+  border: 1px solid lightgray;
+  background-color: #f8f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: fit-content;
+  margin-left: auto;
+}
+.paginationWithHeading p {
+  margin-bottom: 2px;
+}
+.paginationContainer {
+  display: flex;
+  justify-content: end;
+  gap: 12px;
+}
+.paginationContainer input {
+  width: 100px;
+}
+.chartConatiner {
+  /* border: 1px solid black; */
+  padding: 12px 0px;
+  border-radius: 8px;
+  position: relative;
+}
+.refreshChart {
+  position: absolute;
+  z-index: 1;
+  top: 24px;
+  right: 36px;
+  border-radius: 50% !important;
+  font-size: 18px !important;
+  border: 1px solid lightgray !important;
+}
+.refreshChart:hover,
+#changeDischargeRefresh:hover {
+  background-color: #efefef !important;
+  color: #0d5e36 !important;
+}
+.myChart {
+  border-radius: 8px;
+  overflow: hidden;
+  height: 600px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  /* border: 1px solid black; */
+}
+
+.chargeDischargeHeading {
+  /* border: 1px solid black; */
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+.chargeDischargeHeading h2 {
+  margin: 0;
 }

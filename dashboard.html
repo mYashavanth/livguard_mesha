@@ -13,6 +13,8 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
+    <!-- ag-chart -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-charts-community/dist/umd/ag-charts-community.js"></script>
 
     <style>
       body {
@@ -377,7 +379,7 @@
         >
           <div
             class="container-fluid mt-3 mb-3"
-            style="background-color: white; margin: 0"
+            style="background-color: #f8f9fa; margin: 0px"
           >
             <!-- <div class="row height d-flex align-items-center">
               <div class="col-md-6">
@@ -400,9 +402,8 @@
           <div
             class="container-fluid"
             id="dashboardContainer"
-            style="background-color: #f8f9fa; padding: 20px"
+            style="background-color: #f8f9fa; padding: 20px; margin: 0px"
           >
-            <!-- inner html data from dashboard.js -->
             <div class="row">
               <div class="col-lg-12">
                 <div class="ds_ttl_blk">
@@ -427,35 +428,29 @@
                     Customer Name - <span id="vendorName"></span>
                   </h1>
                   <div
-                    class="color_box lr_margin_10"
-                    style="background-color: #00b562"
-                  >
-                    <p>Online</p>
-                  </div>
+                    id="statusDiv"
+                    style="
+                      display: flex;
+                      gap: 8px;
+                      justify-content: center;
+                      align-items: center;
+                      border: 1px solid balck;
+                    "
+                  ></div>
 
                   <div class="verticle_divide lr_margin_10"></div>
                   <h1 class="dh1 lr_margin_10">
                     Device Id-
                     <select id="devices" name="devices">
-                      <!--<option value="MESH2099">MESH2099</option>
-                      <option value="MESH2098">MESH2098</option> -->
+                      <option value=""></option>
                     </select>
                   </h1>
-
-                  <!--<div class="verticle_divide lr_margin_10"></div>
-          <h1 class="dh1 lr_margin_10">Alert</h1>
-          <div
-            class="round_container lr_margin_10"
-            style="background-color: #00b562"
-          ></div>-->
                   <div class="verticle_divide lr_margin_10"></div>
-                  <h1 class="dh1 lr_margin_10">00:00; DD/MM/YYYY</h1>
+                  <h1 id="timeAndDate" class="dh1 lr_margin_10"></h1>
                 </div>
               </div>
-              <!-- id="exportDataBtn" -->
               <button
-                class="btn"
-                style="background-color: #00b562; color: white"
+                class="btn btn-success"
                 onclick="window.location.href='alldevices.html'"
               >
                 Export Data Log
@@ -463,7 +458,306 @@
               <a id="downloadLink" style="display: none"></a>
             </div>
 
+            <section class="mt-3">
+              <!-- <div class="container-fluid"> -->
+              <div class="row">
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Voltage 1 (B1)</h5>
+                      <h6 id="v1" class="ds_crd_h6"></h6>
+                      <!-- <p class="ds_crd_p2">
+                  <i class="bi bi-arrow-up-short"></i> 6.7% Increase
+                </p> -->
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #b9c907;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/voltage.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Voltage 2 (B2)</h5>
+                      <h6 id="v2" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #b9c907;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/voltage.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Voltage 3 (B3)</h5>
+                      <h6 id="v3" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #b9c907;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/voltage.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Voltage 4 (B4)</h5>
+                      <h6 id="v4" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #b9c907;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/voltage.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- </div> -->
+            </section>
+
+            <section class="mt-3">
+              <!-- <div class="container-fluid"> -->
+
+              <div class="row">
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Bat BANK VOLTAGE</h5>
+                      <h6 id="totalVoltage" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #b9c907;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/voltage.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">CURRENT (A)</h5>
+                      <h6 id="current" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #0d5e36;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/current.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">TEMPERATURE (T)</h5>
+                      <h6 id="temperature" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #c38e3e;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/temperature.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Inst Speed (KMPH)</h5>
+                      <h6 id="speed" class="ds_crd_h6"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #3a3a38;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/speed.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- </div> -->
+            </section>
+
+            <section class="mt-3">
+              <!-- <div class="container-fluid"> -->
+              <div class="row">
+                <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">KM driven today</h5>
+                      <h6 class="ds_crd_h6" id="distance"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #3a3a38;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/distance.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="col-lg-3">
+                  <div class="d-flex dsh_crd_bg align-items-center">
+                    <div class="">
+                      <h5 class="ds_crd_p1">Version</h5>
+                      <h6 class="ds_crd_h6" id="version"></h6>
+                    </div>
+                    <div
+                      style="
+                        border: 1px solid #3a3a38;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                      "
+                    >
+                      <img
+                        src="assets/img/version.svg"
+                        class="img-fluid dsh_crd_icn"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div> -->
+              </div>
+              <!-- </div> -->
+            </section>
+
             <!-- card -->
+
+            <div
+              class="container-fluid mb-3 mt-3"
+              style="border-top: 1px solid #4a5154; opacity: 30%"
+            ></div>
+
+            <div class="agChartGraphsContainer">
+              <div class="paginationWithHeading">
+                <p>Graph Duration:</p>
+                <div class="paginationContainer">
+                  <button class="btn btn-outline-primary" id="prevPage">
+                    Prev
+                  </button>
+                  <div>
+                    <label for="pageSizeInput" hidden></label>
+                    <input
+                      class="form-control"
+                      type="number"
+                      id="pageSizeInput"
+                      value="60"
+                      min="10"
+                      step="10"
+                    />
+                  </div>
+                  <button class="btn btn-outline-primary" id="nextPage">
+                    Next
+                  </button>
+                </div>
+              </div>
+              <div class="chartConatiner">
+                <button class="refreshChart btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+                <div class="myChart" id="batteryVoltageChart"></div>
+              </div>
+              <div class="chartConatiner">
+                <button class="refreshChart btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+                <div class="myChart" id="currentChart"></div>
+              </div>
+              <div class="chartConatiner">
+                <button class="refreshChart btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+                <div class="myChart" id="bankVoltageChart"></div>
+              </div>
+            </div>
 
             <div
               class="container-fluid mb-3 mt-3"
@@ -484,12 +778,21 @@
                 "
               >
                 <h1 class="dh1">Map View</h1>
+                <div id="map" style="height: 700px; width: 100%"></div>
               </div>
             </div>
           </div>
 
           <div class="container-fluid mt-5">
-            <h2>Charge/Discharge Data</h2>
+            <div class="chargeDischargeHeading">
+              <h2>Charge/Discharge Data</h2>
+              <button
+                class="btn btn-outline-secondary btn-sm"
+                id="changeDischargeRefresh"
+              >
+                Refresh Data
+              </button>
+            </div>
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
@@ -500,11 +803,18 @@
                   <th>Duration - Hours</th>
                   <th>Temperature - Max</th>
                   <th>Temperature - Min</th>
-                  <th>AH</th>
-                  <th>V1</th>
-                  <th>V2</th>
-                  <th>V3</th>
-                  <th>V4</th>
+                  <th>
+                    AH <br />
+                    In
+                  </th>
+                  <th>
+                    AH <br />
+                    Out
+                  </th>
+                  <th>B1</th>
+                  <th>B2</th>
+                  <th>B3</th>
+                  <th>B4</th>
                   <th>Amps - Max</th>
                   <th>Amps - Min</th>
                   <th>Bank Voltage</th>
@@ -638,7 +948,397 @@
       });
     </script>
     <!--drag/drop-->
+    <!-- ag-chart start -->
+    <script>
+      // Function to fetch data from the API
+      const pageSizeInput = document.getElementById("pageSizeInput");
+
+      async function fetchData() {
+        const deviceId = localStorage.getItem("selectedDeviceId");
+        const authToken = localStorage.getItem("authToken");
+        console.log({ deviceId, authToken });
+
+        if (!deviceId || !authToken) {
+          console.error("Device ID or Auth Token not found in local storage.");
+          return [];
+        }
+
+        const url = `https://dms.meshaenergy.com/apis/graph/24hours/${deviceId}/${authToken}`;
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const result = await response.json();
+          const dummy = [
+            {
+              b1: "12.61",
+              b2: "12.55",
+              b3: "12.54",
+              b4: "12.49",
+              charging_ah: "0.0",
+              current: "-2.33",
+              discharging_ah: "0.0999",
+              lat: "2815.5036",
+              log_date: "Mon, 21 Oct 2024 00:00:00 GMT",
+              log_time: "16:52:12",
+              long: "7751.183",
+              row_num: 198,
+              temperature: "37",
+            },
+            {
+              b1: "12.65",
+              b2: "12.56",
+              b3: "12.57",
+              b4: "12.50",
+              charging_ah: "0.0",
+              current: "-0.58",
+              discharging_ah: "0.2131",
+              lat: "2815.3792",
+              log_date: "Mon, 21 Oct 2024 00:00:00 GMT",
+              log_time: "16:54:12",
+              long: "7751.081",
+              row_num: 199,
+              temperature: "37",
+            },
+          ];
+          console.log({ datas: processApiData(dummy), result });
+          // send only last 24hr data or less
+          const pageSize = 1440;
+          const lastIndex = result.length;
+          const firstIndex = Math.max(0, lastIndex - pageSize);
+          return processApiData(result.slice(firstIndex, lastIndex));
+        } catch (error) {
+          console.error("Error fetching data from API:", error);
+          return [];
+        }
+      }
+
+      // Function to process API data into the required format
+      function processApiData(apiData) {
+        return apiData
+          .map((entry) => {
+            try {
+              // Calculate bank voltage as the sum of b1, b2, b3, and b4
+              const bankVoltage =
+                parseFloat(entry.b1) +
+                parseFloat(entry.b2) +
+                parseFloat(entry.b3) +
+                parseFloat(entry.b4);
+
+              // Format log_date to "YYYY-MM-DD" format
+              const logDate = new Date(entry.log_date);
+              const year = logDate.getUTCFullYear();
+              const month = String(logDate.getUTCMonth() + 1).padStart(2, "0");
+              const day = String(logDate.getUTCDate()).padStart(2, "0");
+
+              // Combine log_date and log_time into an ISO 8601 format string
+              const fullDateTimeStr = `${year}-${month}-${day}T${entry.log_time}`;
+
+              // Create a Date object with the combined date and time
+              const fullDateTime = new Date(fullDateTimeStr);
+
+              // Check if the combined date and time is valid
+              if (isNaN(fullDateTime.getTime())) {
+                console.error(
+                  "Invalid date and time:",
+                  entry.log_date,
+                  entry.log_time
+                );
+                return null; // Skip this entry if invalid
+              }
+
+              // Format time to hh:mm:ss AM/PM
+              const formattedTime = fullDateTime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+              });
+
+              return {
+                full_date_time: fullDateTime, // For unique filtering or sorting
+                log_time: formattedTime, // For display purposes
+                b1: parseFloat(entry.b1),
+                b2: parseFloat(entry.b2),
+                b3: parseFloat(entry.b3),
+                b4: parseFloat(entry.b4),
+                current: parseFloat(entry.current),
+                bank_voltage: parseFloat(bankVoltage.toFixed(2)),
+              };
+            } catch (error) {
+              console.error("Error processing entry:", entry, error);
+              return null; // Skip entry on error
+            }
+          })
+          .filter((entry) => entry !== null); // Remove invalid entries
+      }
+
+      // Function to update the charts with new data
+      let pageSize = 60; // Default page size
+      let totalData = []; // To store the complete data array
+      // console.log({ totalData });
+      let currentPage = Math.ceil(totalData.length / pageSize); // Current page index should be eqral to last page
+
+      function getPaginatedData() {
+        const endIndex =
+          totalData.length -
+          (Math.ceil(totalData.length / pageSize) - currentPage - 1) * pageSize; // Calculate the end index
+        const startIndex = Math.max(0, endIndex - pageSize); // Ensure the start index is not negative
+        console.log({ startIndex, endIndex });
+
+        return totalData.slice(startIndex, endIndex); // Return the sliced data
+      }
+
+      function updatePaginationButtons() {
+        const totalPages = Math.ceil(totalData.length / pageSize);
+        document.getElementById("prevPage").disabled = currentPage <= 0;
+        document.getElementById("nextPage").disabled =
+          currentPage >= totalPages - 1;
+      }
+
+      async function updateCharts() {
+        document.getElementById("batteryVoltageChart").innerHTML = "";
+        document.getElementById("currentChart").innerHTML = "";
+        document.getElementById("bankVoltageChart").innerHTML = "";
+
+        const paginatedData = getPaginatedData();
+
+        if (paginatedData.length === 0) {
+          console.log("No data available to display on the charts.");
+          // return;
+        }
+
+        // First Chart: Battery Voltages
+        const batteryVoltageOptions = {
+          container: document.getElementById("batteryVoltageChart"),
+          title: {
+            text: "Individual Battery Voltage (Up to 24 hrs)",
+          },
+          data: paginatedData,
+          series: [
+            {
+              type: "line",
+              xKey: "full_date_time", // Use full_date_time for unique values
+              xName: "Date & Time", // Tooltip shows both date and time
+              yKey: "b1",
+              yName: "B1",
+              stroke: "#5D49F2",
+              interpolation: { type: "smooth" },
+              marker: { enabled: false },
+            },
+            {
+              type: "line",
+              xKey: "full_date_time", // Use full_date_time for unique values
+              xName: "Date & Time", // Tooltip shows both date and time
+              yKey: "b2",
+              yName: "B2",
+              stroke: "#438A3F",
+              interpolation: { type: "smooth" },
+              marker: { enabled: false },
+            },
+            {
+              type: "line",
+              xKey: "full_date_time", // Use full_date_time for unique values
+              xName: "Date & Time", // Tooltip shows both date and time
+              yKey: "b3",
+              yName: "B3",
+              stroke: "#F41A1A",
+              interpolation: { type: "smooth" },
+              marker: { enabled: false },
+            },
+            {
+              type: "line",
+              xKey: "full_date_time", // Use full_date_time for unique values
+              xName: "Date & Time", // Tooltip shows both date and time
+              yKey: "b4",
+              yName: "B4",
+              stroke: "#CD8A05",
+              interpolation: { type: "smooth" },
+              marker: { enabled: false },
+            },
+          ],
+          axes: [
+            {
+              type: "time", // Use a time axis to support full_date_time
+              position: "bottom",
+              title: { text: "Time (hh:mm:ss)" },
+              label: {
+                formatter: (params) => {
+                  // Format axis labels to show only time
+                  const date = new Date(params.value);
+                  return date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  });
+                },
+                rotation: -30,
+              },
+            },
+            {
+              type: "number",
+              position: "left",
+              title: { text: "Voltage (V)" },
+            },
+          ],
+        };
+        agCharts.AgCharts.create(batteryVoltageOptions);
+
+        // Second Chart: Current
+        const currentOptions = {
+          container: document.getElementById("currentChart"),
+          title: { text: "Current (Up to 24 hrs)" },
+          data: paginatedData, // Use the processed data
+          series: [
+            {
+              type: "line",
+              xKey: "full_date_time", // Use full_date_time for unique values
+              xName: "Date & Time", // Tooltip shows both date and time
+              yKey: "current",
+              yName: "Current (A)",
+              stroke: "#438A3F",
+              interpolation: { type: "smooth" },
+              marker: { enabled: false },
+            },
+          ],
+          axes: [
+            {
+              type: "time", // Use a time axis to support full_date_time
+              position: "bottom",
+              title: { text: "Time (hh:mm:ss)" },
+              label: {
+                formatter: (params) => {
+                  // Format axis labels to show only time
+                  const date = new Date(params.value);
+                  return date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  });
+                },
+                rotation: -30,
+              },
+            },
+            {
+              type: "number",
+              position: "left",
+              title: { text: "Current (A)" },
+            },
+          ],
+        };
+        agCharts.AgCharts.create(currentOptions);
+
+        // Third Chart: Bank Voltage
+        const bankVoltageOptions = {
+          container: document.getElementById("bankVoltageChart"),
+          title: { text: "Bank Voltage (Up to 24 hrs)" },
+          data: paginatedData,
+          series: [
+            {
+              type: "line",
+              xKey: "full_date_time", // Use full_date_time for unique values
+              xName: "Date & Time", // Tooltip shows both date and time
+              yKey: "bank_voltage",
+              yName: "Bank Voltage",
+              stroke: "#233105",
+              interpolation: { type: "smooth" },
+              marker: { enabled: false },
+            },
+          ],
+          axes: [
+            {
+              type: "time", // Use a time axis to support full_date_time
+              position: "bottom",
+              title: { text: "Time (hh:mm:ss)" },
+              label: {
+                formatter: (params) => {
+                  // Format axis labels to show only time
+                  const date = new Date(params.value);
+                  return date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  });
+                },
+                rotation: -30,
+              },
+            },
+            {
+              type: "number",
+              position: "left",
+              title: { text: "Voltage (V)" },
+            },
+          ],
+        };
+        agCharts.AgCharts.create(bankVoltageOptions);
+      }
+
+      async function initializeChart() {
+        totalData = await fetchData();
+        console.log({ totalData });
+        currentPage = Math.ceil(totalData.length / pageSize) - 1;
+        pageSizeInput.setAttribute("max", totalData.length);
+
+        updateCharts();
+        updatePaginationButtons();
+      }
+
+      document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 0) {
+          currentPage--;
+          updateCharts();
+          updatePaginationButtons();
+        }
+      });
+
+      document.getElementById("nextPage").addEventListener("click", () => {
+        const totalPages = Math.ceil(totalData.length / pageSize);
+        if (currentPage < totalPages - 1) {
+          currentPage++;
+          updateCharts();
+          updatePaginationButtons();
+        }
+      });
+
+      pageSizeInput.addEventListener("change", (event) => {
+        const newSize = parseInt(event.target.value, 10);
+        if (newSize > 0) {
+          pageSize = newSize;
+          currentPage = Math.ceil(totalData.length / pageSize) - 1; // Reset to the first page
+          updateCharts();
+          updatePaginationButtons();
+        }
+        if (newSize > totalData.length) {
+          pageSizeInput.value = totalData.length;
+          pageSize = totalData.length;
+          currentPage = Math.ceil(totalData.length / pageSize) - 1;
+          updateCharts();
+          updatePaginationButtons();
+        } else if (newSize < 10) {
+          pageSizeInput.value = 10;
+          pageSize = 10;
+          currentPage = Math.ceil(totalData.length / pageSize) - 1;
+          updateCharts();
+          updatePaginationButtons();
+        }
+      });
+
+      initializeChart();
+
+      // Refresh charts every minute
+      // var graphIntervalId;
+      // graphIntervalId = setInterval(updateCharts, 30000);
+      let refreshButtons = document.querySelectorAll(".refreshChart");
+
+      for (let i = 0; i < refreshButtons.length; i++) {
+        refreshButtons[i].addEventListener("click", initializeChart);
+      }
+    </script>
+    <!-- ag-chart end -->
   </body>
 </html>
 <script src="./assets/js/dashboard.js"></script>
+<!-- <script src="./assets/js/module_permission.js"></script> -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDimDjoGeaoSdHBzihrmYnscbcALzfFQ24&callback=initMap"></script>

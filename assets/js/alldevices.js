@@ -1,75 +1,3 @@
-document.addEventListener("DOMContentLoaded", async function () {
-  const authToken = localStorage.getItem("authToken");
-  const customerId = localStorage.getItem("customerId");
-  const tableBody = document.getElementsByTagName("tbody");
-  console.log(authToken);
-  async function fetchData() {
-    try {
-      const response = await fetch(
-        `https://dms.meshaenergy.com/apis/alldevices/primary-data/${customerId}/${authToken}`,
-        {
-          method: "GET",
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      const status = "Online";
-      tableBody[0].innerHTML = "";
-      for (let i = 0; i < data.length; i++) {
-        const row = data[i];
-        const tableRow = document.createElement("tr");
-        //<td>Id : #${customerId}</td>
-        tableRow.innerHTML = `
-          <td onclick="handleDeviceClick('${
-            row.device_id
-          }')" style="cursor: pointer; color: #00b562; text-decoration: underline">${
-          row.device_id
-        }</td>
-          <td>
-            <div class="color_box" style="background-color: ${
-              status === "Online" ? "#00B562" : "#626C70"
-            };">
-              <p>${status}</p>
-            </div>
-          </td>
-          <td>${row.v1}</td>
-          <td>${row.v2}</td>
-          <td>${row.v3}</td>
-          <td>${row.v4}</td>
-          <td>${(
-            Number(row.v1) +
-            Number(row.v2) +
-            Number(row.v3) +
-            Number(row.v4)
-          ).toFixed(2)}</td>
-          <td>${row.current}</td>
-          <td id="distance${row.device_id}"></td>
-          <td>${row.temperature}</td>
-          <!--<td><button class="btn btn_local_style">View</button></td>-->
-          <td><button class="btn btn_local_style" onclick="openMapModal(${
-            row.lat
-          }, ${row.long})">View</button>
-          <td>${formatDate(row.device_log_date)}<br />${
-          row.latest_updated_time
-        }</td>
-          <!--<td>
-            <a href="https://dms.meshaenergy.com/apis/download/csv/today/${
-              row.device_id
-            }/${authToken}" download><button class="icon_button"><i style="color: #626C70;" class="bi bi-download"></i></button></a>
-          </td> -->
-        `;
-        fetchDistance(row.device_id, authToken);
-        fetchDeviceIds(customerId, authToken);
-        tableBody[0].appendChild(tableRow);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  fetchData();
-  setInterval(fetchData, 30000);
-});
-
 const voltageInputValidationMsg = document.getElementById(
   "voltageInputValidationMsg"
 );
@@ -325,19 +253,670 @@ function closeVoltageModal() {
   }
 }
 
-function handleDeviceClick(deviceId) {
-  // Store the selected device ID in local storage
-  localStorage.setItem("selectedDeviceId", deviceId);
+async function getTempDataForAlert() {
+  const authToken = localStorage.getItem("authToken");
+  const voltageApiUrl = `https://dms.meshaenergy.com/apis/voltage-settings/${authToken}`;
 
-  // Navigate to the dashboard page
-  window.location.href = "dashboard.html"; // or whatever your dashboard page is called
+  try {
+    const response = await fetch(voltageApiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
+
+    const volData = await response.json();
+    console.log(volData);
+    if (volData.errFlag == 1) {
+      throw new Error(`Error: ${volData.message}`);
+    }
+    if (volData.length === 0) {
+      return null;
+    }
+
+    return volData[0];
+  } catch (error) {
+    console.error("Error fetching voltage settings:", error);
+    return null;
+  }
 }
+// function toSetAlert(tempAlerData, params) {
+//   const alertDiv = document.createElement("div");
+//   if (!tempAlerData) {
+//     // If empty, display a gray circle
+//     alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: gray; border-radius: 50%;"></span>`;
+//     return;
+//   }
+//   const { v1, v2, v3, v4 } = params;
+//   const checkAlert = (value, low, high) =>
+//     value < parseFloat(low) || value > parseFloat(high);
+
+//   const isAlert = [
+//     checkAlert(v1, tempAlerData.v1_low, tempAlerData.v1_high),
+//     checkAlert(v2, tempAlerData.v2_low, tempAlerData.v2_high),
+//     checkAlert(v3, tempAlerData.v3_low, tempAlerData.v3_high),
+//     checkAlert(v4, tempAlerData.v4_low, tempAlerData.v4_high),
+//   ].some(Boolean);
+
+//   const allZero = [
+//     "v1_high",
+//     "v1_low",
+//     "v2_high",
+//     "v2_low",
+//     "v3_high",
+//     "v3_low",
+//     "v4_high",
+//     "v4_low",
+//   ].every((key) => parseFloat(tempAlerData[key]) === 0);
+
+//   if (allZero) {
+//     alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: gray; border-radius: 50%;"></span>`;
+//   } else {
+//     alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: ${
+//       isAlert ? "red" : "green"
+//     }; border-radius: 50%;"></span>`;
+//   }
+
+//   return alertDiv;
+// }
+
+// function currentStatus(date, time) {
+//   const deviceLogDate = date; // e.g., "09/10/2024"
+//   const logTime = time; // e.g., "23:38"
+//   // console.log(date, time);
+
+//   // Get the current date and time components separately
+//   const currentDate = new Date();
+//   const currentYear = currentDate.getFullYear();
+//   const currentMonth = currentDate.getMonth() + 1; // months are 0-based
+//   const currentDay = currentDate.getDate();
+//   const currentHours = currentDate.getHours();
+//   const currentMinutes = currentDate.getMinutes();
+
+//   // Parse the deviceLogDate and time separately
+//   const [logDay, logMonth, logYear] = deviceLogDate.split("/").map(Number); // "MM/DD/YYYY" format
+//   const [logHours, logMinutes] = logTime.split(":").map(Number); // "HH:MM" format
+
+//   let statusText = "Online";
+//   let backgroundColor = "rgb(213, 255, 213)"; // Green background
+
+//   // Compare the dates
+//   if (
+//     logYear < currentYear ||
+//     (logYear === currentYear && logMonth < currentMonth) ||
+//     (logYear === currentYear &&
+//       logMonth === currentMonth &&
+//       logDay < currentDay)
+//   ) {
+//     // Device date is in the past
+//     statusText = "Offline";
+//     backgroundColor = "#EFEFEF";
+//   } else if (
+//     logYear === currentYear &&
+//     logMonth === currentMonth &&
+//     logDay === currentDay
+//   ) {
+//     // If the date is today, compare the times
+//     const timeDifference =
+//       (currentHours - logHours) * 60 + (currentMinutes - logMinutes); // difference in minutes
+
+//     if (timeDifference >= 5) {
+//       statusText = "Offline";
+//       backgroundColor = "#EFEFEF";
+//     }
+//   }
+
+//   return `<span style="color: ${
+//     statusText === "Online" ? "#0D5E36" : "gray"
+//   };  border: 1px solid ${
+//     statusText === "Online" ? "#0D5E36" : "gray"
+//   }; padding: 5px; border-radius: 5px; background-color: ${backgroundColor}">${statusText}</span>`;
+// }
+const gridOptions = {
+  rowData: [],
+  columnDefs: [
+    {
+      headerName: "Device ID",
+      field: "deviceId",
+      sortable: true,
+      filter: true,
+      minWidth: 170,
+      cellRenderer: (params) => {
+        // Make the cell clickable
+        return `<span class="device-id-cell" style="cursor:pointer;color:#0d5e36;text-decoration:underline;">${params.value}</span>`;
+      },
+      onCellClicked: (params) => {
+        // Set localStorage and navigate to dashboard
+        localStorage.setItem("selectedDeviceId", params.value);
+        window.location.href = "/dashboard.html";
+      },
+    },
+    {
+      headerName: "Status",
+      field: "deviceId",
+      sortable: true, // Enable sorting
+      maxWidth: 100,
+      cellRenderer: (params) => {
+        const deviceLogDate = params.data.deviceLogDate; // e.g., "09/10/2024"
+        const logTime = params.data.time; // e.g., "23:38"
+
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // months are 0-based
+        const currentDay = currentDate.getDate();
+        const currentHours = currentDate.getHours();
+        const currentMinutes = currentDate.getMinutes();
+
+        const [logDay, logMonth, logYear] = deviceLogDate
+          .split("/")
+          .map(Number); // "MM/DD/YYYY" format
+        const [logHours, logMinutes] = logTime.split(":").map(Number); // "HH:MM" format
+
+        let statusText = "Online";
+        let backgroundColor = "rgb(213, 255, 213)"; // Green background
+        console.log({
+          logYear,
+          currentYear,
+          logMonth,
+          currentMonth,
+          logDay,
+          currentDay,
+        });
+
+        if (
+          logYear < currentYear ||
+          (logYear === currentYear && logMonth < currentMonth) ||
+          (logYear === currentYear &&
+            logMonth === currentMonth &&
+            logDay < currentDay)
+        ) {
+          statusText = "Offline";
+          backgroundColor = "#EFEFEF";
+        } else if (
+          logYear === currentYear &&
+          logMonth === currentMonth &&
+          logDay === currentDay
+        ) {
+          const timeDifference =
+            (currentHours - logHours) * 60 + (currentMinutes - logMinutes); // difference in minutes
+
+          if (timeDifference >= 5) {
+            statusText = "Offline";
+            backgroundColor = "#EFEFEF";
+          }
+        }
+
+        return `<span style="color: ${
+          statusText === "Online" ? "#0D5E36" : "gray"
+        };  border: 1px solid ${
+          statusText === "Online" ? "#0D5E36" : "gray"
+        }; padding: 5px; border-radius: 5px; background-color: ${backgroundColor}">${statusText}</span>`;
+      },
+      comparator: (valueA, valueB, nodeA, nodeB) => {
+        const getStatusRank = (node) => {
+          const { deviceLogDate, time } = node.data;
+
+          const currentDate = new Date();
+          const currentYear = currentDate.getFullYear();
+          const currentMonth = currentDate.getMonth() + 1;
+          const currentDay = currentDate.getDate();
+          const currentHours = currentDate.getHours();
+          const currentMinutes = currentDate.getMinutes();
+
+          const [logDay, logMonth, logYear] = deviceLogDate
+            .split("/")
+            .map(Number);
+          const [logHours, logMinutes] = time.split(":").map(Number);
+
+          if (
+            logYear < currentYear ||
+            (logYear === currentYear && logMonth < currentMonth) ||
+            (logYear === currentYear &&
+              logMonth === currentMonth &&
+              logDay < currentDay)
+          ) {
+            return 0; // Offline (older dates)
+          } else if (
+            logYear === currentYear &&
+            logMonth === currentMonth &&
+            logDay === currentDay
+          ) {
+            const timeDifference =
+              (currentHours - logHours) * 60 + (currentMinutes - logMinutes);
+            return timeDifference >= 5 ? 0 : 1; // Offline if time difference >= 5 mins
+          }
+
+          return 1; // Online
+        };
+
+        return getStatusRank(nodeA) - getStatusRank(nodeB);
+      },
+      filterParams: {
+        values: ["Online", "Offline"], // Set the filter options manually
+        comparator: (filterValue, cellValue) => {
+          // Compare filter values with computed cell values
+          return filterValue === cellValue ? 0 : -1;
+        },
+      },
+      filterValueGetter: (params) => {
+        const deviceLogDate = params.data.deviceLogDate;
+        const logTime = params.data.time;
+
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentDay = currentDate.getDate();
+        const currentHours = currentDate.getHours();
+        const currentMinutes = currentDate.getMinutes();
+
+        const [logDay, logMonth, logYear] = deviceLogDate
+          .split("/")
+          .map(Number);
+        const [logHours, logMinutes] = logTime.split(":").map(Number);
+
+        if (
+          logYear < currentYear ||
+          (logYear === currentYear && logMonth < currentMonth) ||
+          (logYear === currentYear &&
+            logMonth === currentMonth &&
+            logDay < currentDay)
+        ) {
+          return "Offline";
+        } else if (
+          logYear === currentYear &&
+          logMonth === currentMonth &&
+          logDay === currentDay
+        ) {
+          const timeDifference =
+            (currentHours - logHours) * 60 + (currentMinutes - logMinutes);
+
+          if (timeDifference >= 5) {
+            return "Offline";
+          }
+        }
+
+        return "Online";
+      },
+    },
+    {
+      headerName: "Alert",
+      field: "alert",
+      maxWidth: 70,
+      filter: false,
+      cellStyle: { textAlign: "center" },
+      cellRenderer: (params) => {
+        const tempAlerData = params.data.tempAlerData;
+        const alertDiv = document.createElement("div");
+        if (!tempAlerData) {
+          // If empty, display a gray circle
+          alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: gray; border-radius: 50%;"></span>`;
+          return alertDiv;
+        }
+
+        const voltageSettings = tempAlerData;
+        const { v1, v2, v3, v4 } = params.data;
+        const checkAlert = (value, low, high) =>
+          value < parseFloat(low) || value > parseFloat(high);
+
+        const isAlert = [
+          checkAlert(v1, voltageSettings.v1_low, voltageSettings.v1_high),
+          checkAlert(v2, voltageSettings.v2_low, voltageSettings.v2_high),
+          checkAlert(v3, voltageSettings.v3_low, voltageSettings.v3_high),
+          checkAlert(v4, voltageSettings.v4_low, voltageSettings.v4_high),
+        ].some(Boolean);
+
+        const allZero = [
+          "v1_high",
+          "v1_low",
+          "v2_high",
+          "v2_low",
+          "v3_high",
+          "v3_low",
+          "v4_high",
+          "v4_low",
+        ].every((key) => parseFloat(voltageSettings[key]) === 0);
+
+        if (allZero) {
+          alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: gray; border-radius: 50%;"></span>`;
+        } else {
+          alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: ${
+            isAlert ? "red" : "green"
+          }; border-radius: 50%;"></span>`;
+        }
+
+        return alertDiv;
+      },
+      comparator: (valueA, valueB, nodeA, nodeB) => {
+        const getAlertStatus = (node) => {
+          const tempAlerData = node.data.tempAlerData;
+          if (!tempAlerData) return 0; // Treat as no alert (gray circle)
+
+          const voltageSettings = tempAlerData;
+          const { v1, v2, v3, v4 } = node.data;
+          const checkAlert = (value, low, high) =>
+            value < parseFloat(low) || value > parseFloat(high);
+
+          const isAlert = [
+            checkAlert(v1, voltageSettings.v1_low, voltageSettings.v1_high),
+            checkAlert(v2, voltageSettings.v2_low, voltageSettings.v2_high),
+            checkAlert(v3, voltageSettings.v3_low, voltageSettings.v3_high),
+            checkAlert(v4, voltageSettings.v4_low, voltageSettings.v4_high),
+          ].some(Boolean);
+
+          const allZero = [
+            "v1_high",
+            "v1_low",
+            "v2_high",
+            "v2_low",
+            "v3_high",
+            "v3_low",
+            "v4_high",
+            "v4_low",
+          ].every((key) => parseFloat(voltageSettings[key]) === 0);
+
+          if (allZero) return 0; // Gray circle
+          return isAlert ? 1 : 2; // Red = 1 (high priority), Green = 2 (low priority)
+        };
+
+        return getAlertStatus(nodeA) - getAlertStatus(nodeB);
+      },
+    },
+    {
+      headerName: "B1",
+      field: "v1",
+      filter: false,
+      sortable: false,
+      maxWidth: 80,
+    },
+    {
+      headerName: "B2",
+      field: "v2",
+      filter: false,
+      sortable: false,
+      maxWidth: 80,
+    },
+    {
+      headerName: "B3",
+      field: "v3",
+      filter: false,
+      sortable: false,
+      maxWidth: 80,
+    },
+    {
+      headerName: "B4",
+      field: "v4",
+      filter: false,
+      sortable: false,
+      maxWidth: 80,
+    },
+    {
+      headerName: "Bank Voltage",
+      field: "bankVoltage",
+      filter: false,
+      sortable: false,
+      maxWidth: 130,
+    },
+    {
+      headerName: "A",
+      field: "current",
+      filter: false,
+      maxWidth: 80,
+    },
+    {
+      headerName: "Distance",
+      field: "deviceId",
+      filter: false,
+      maxWidth: 130,
+      cellRenderer: (params) => {
+        const cellDiv = document.createElement("div");
+        cellDiv.innerHTML = "Loading...";
+
+        const deviceId = params.value;
+        const authToken = localStorage.getItem("authToken");
+        const distanceApiUrl = `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`;
+
+        fetch(distanceApiUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Error: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((result) => {
+            // console.log({ result });
+
+            // Once we get the data, update the cell content
+            cellDiv.innerHTML = `${result[0].distance_in_kms.toFixed(2)} km`;
+          })
+          .catch((error) => {
+            console.error("Error fetching distance:", error);
+            cellDiv.innerHTML = "Error";
+          });
+
+        return cellDiv;
+      },
+    },
+    {
+      headerName: "T",
+      field: "temperature",
+      filter: false,
+      maxWidth: 70,
+    },
+    {
+      headerName: "Inst Speed",
+      field: "speed",
+      filter: false,
+      cellRenderer: (params) => {
+        let current = params.data.current;
+        let speed = params.data.speed;
+        return current > 5 ? 0 : speed;
+      },
+    },
+    {
+      headerName: "Date & Time",
+      field: "deviceLogDate",
+      minWidth: 120,
+      cellRenderer: (params) => {
+        const date = params.data.deviceLogDate;
+        const time = params.data.time;
+        // Use <br> for a line break between date and time
+        return `${date} <br> ${time}`;
+      },
+      filter: "agDateColumnFilter",
+      filterParams: {
+        comparator: (filterLocalDateAtMidnight, cellValue) => {
+          const date = cellValue.split(" <br> ")[0]; // Extract date part only for comparison
+          const dateParts = date.split("/");
+          const day = Number(dateParts[0]);
+          const month = Number(dateParts[1]) - 1;
+          const year = Number(dateParts[2]);
+          const cellDate = new Date(year, month, day);
+
+          if (cellDate < filterLocalDateAtMidnight) {
+            return -1;
+          } else if (cellDate > filterLocalDateAtMidnight) {
+            return 1;
+          } else {
+            return 0;
+          }
+        },
+      },
+    },
+    {
+      headerName: "Location",
+      field: "location",
+      filter: false,
+      sortable: false,
+      minWidth: 90,
+      cellRenderer: (params) => {
+        const lat = params.data.lat;
+        const long = params.data.long;
+        return `<button 
+              type="button"
+              class="btn btn_local_style"
+              onclick="openMapModal(${lat}, ${long})"
+            >View</button>`;
+      },
+    },
+    // {
+    //   headerName: "Action",
+    //   field: "action",
+    //   filter: false,
+    //   sortable: false,
+    //   maxWidth: 80,
+    //   cellRenderer: (params) => {
+    //     const authToken = localStorage.getItem("authToken");
+    //     const deviceId = params.data.deviceId;
+    //     return `<a
+    //               href="https://dms.meshaenergy.com/apis/download/csv/today/${deviceId}/${authToken}"
+    //               download
+    //             >
+    //               <button
+    //                 class="btn download-button"
+    //               >
+    //                 <i style="color: #626C70;" class="bi bi-download"></i>
+    //               </button>
+    //             </a>`;
+    //   },
+    // },
+  ],
+
+  defaultColDef: {
+    sortable: true,
+    filter: "agTextColumnFilter",
+    // floatingFilter: true,
+    flex: 1,
+    filterParams: {
+      debounceMs: 0,
+      buttons: ["reset"],
+    },
+  },
+  domLayout: "autoHeight",
+  getRowHeight: function (params) {
+    return 80;
+  },
+  pagination: true,
+  paginationPageSize: 10,
+  paginationPageSizeSelector: [10, 20, 30, 50],
+};
+document.addEventListener("DOMContentLoaded", async function () {
+  const gridDiv = document.querySelector("#myGrid");
+  var gridApi = agGrid.createGrid(gridDiv, gridOptions);
+  const tempAlerData = await getTempDataForAlert();
+  // console.log({ tempAlerData });
+
+  const authToken = localStorage.getItem("authToken");
+  const customerId = localStorage.getItem("customerId");
+  // const tableBody = document.getElementsByTagName("tbody");
+  fetchDeviceIds(customerId, authToken);
+  // console.log(authToken);
+  async function fetchData() {
+    try {
+      const response = await fetch(
+        `https://dms.meshaenergy.com/apis/alldevices/primary-data/${customerId}/${authToken}`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+      const formattedData = data.map((item, index) => ({
+        index: index + 1,
+        deviceId: item.device_id,
+        deviceLogDate: formatDate(item.device_log_date),
+        lat: item.lat,
+        long: item.long,
+        speed: item.speed,
+        temperature: item.temperature,
+        v1: item.v1,
+        v2: item.v2,
+        v3: item.v3,
+        v4: item.v4,
+        bankVoltage: (
+          Number(item.v1) +
+          Number(item.v2) +
+          Number(item.v3) +
+          Number(item.v4)
+        ).toFixed(2),
+        time: item.latest_updated_time,
+        current: item.current,
+        tempAlerData: tempAlerData,
+      }));
+      gridApi.setGridOption("rowData", formattedData);
+      console.log(data);
+      // tableBody[0].innerHTML = "";
+      // for (let i = 0; i < data.length; i++) {
+      //   const row = data[i];
+      //   const tableRow = document.createElement("tr");
+      //   //<td>Id : #${customerId}</td>
+      //   tableRow.innerHTML = `
+      //     <td>${row.device_id}</td>
+      //     <td>
+      //       ${currentStatus(
+      //         formatDate(row.device_log_date),
+      //         row.latest_updated_time
+      //       )}
+      //     </td>
+      //     <td>
+      //        ${
+      //          toSetAlert(tempAlerData, {
+      //            v1: row.v1,
+      //            v2: row.v2,
+      //            v3: row.v3,
+      //            v4: row.v4,
+      //          }).outerHTML
+      //        }
+      //     </td>
+      //     <td>${row.v1}</td>
+      //     <td>${row.v2}</td>
+      //     <td>${row.v3}</td>
+      //     <td>${row.v4}</td>
+      //     <td>${(
+      //       Number(row.v1) +
+      //       Number(row.v2) +
+      //       Number(row.v3) +
+      //       Number(row.v4)
+      //     ).toFixed(2)}</td>
+      //     <td>${row.current}</td>
+      //     <td id="distance${row.device_id}"></td>
+      //     <td>${row.temperature}</td>
+      //     <td>${row.current > 5 ? 0 : row.speed}</td>
+      //     <td>${formatDate(row.device_log_date)}<br />${
+      //     row.latest_updated_time
+      //   }</td>
+      //     <!--<td><button class="btn btn_local_style">View</button></td>-->
+      //     <td><button class="btn btn_local_style" onclick="openMapModal(${
+      //       row.lat
+      //     }, ${row.long})">View</button>
+      //     <td>
+      //       <!--<button class="icon_button"><i style="color: #626C70;" class="bi bi-eye-fill"></i></button>-->
+      //       <a href="https://dms.meshaenergy.com/apis/download/csv/today/${
+      //         row.device_id
+      //       }/${authToken}" download><button class="btn download-button"><i style="color: #626C70;" class="bi bi-download"></i></button></a>
+      //     </td>
+      //   `;
+      //   fetchDistance(row.device_id, authToken);
+      //   tableBody[0].appendChild(tableRow);
+      // }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  fetchData();
+  setInterval(fetchData, 60000);
+});
 
 // auth check
 function checkAuth() {
   const token = localStorage.getItem("authToken");
   if (!token) {
-    window.location.href = "index.html";
+    window.location.href = "/";
   }
 }
 window.onload = checkAuth;
@@ -346,7 +925,7 @@ document.getElementById("logoutBtn").addEventListener("click", function () {
   localStorage.removeItem("authToken");
   localStorage.removeItem("customerId");
   localStorage.clear();
-  window.location.href = "index.html";
+  window.location.href = "/";
 });
 
 // map modal
@@ -358,7 +937,7 @@ function convertToDecimalDegrees(coordinate) {
   return decimalDegrees;
 }
 function initMap(lat, lng) {
-  console.log(lat, Number(lng));
+  // console.log(lat, Number(lng));
   const location = {
     lat: convertToDecimalDegrees(Number(lat)),
     lng: convertToDecimalDegrees(Number(lng)),
@@ -411,27 +990,27 @@ function formatDate(dateString) {
   return `${formattedDay}/${formattedMonth}/${year}`;
 }
 
-function fetchDistance(deviceId, authToken) {
-  if (!deviceId) {
-    deviceId = "MESH2099";
-  }
-  console.log(deviceId, authToken);
-  fetch(
-    `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
-    {
-      method: "GET",
-    }
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-      document.getElementById(`distance${deviceId}`).innerHTML =
-        data[0].distance_in_kms.toFixed(2);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
+// function fetchDistance(deviceId, authToken) {
+//   if (!deviceId) {
+//     deviceId = "MESH2099";
+//   }
+//   // console.log(deviceId, authToken);
+//   fetch(
+//     `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
+//     {
+//       method: "GET",
+//     }
+//   )
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // console.log("Success:", data);
+//       document.getElementById(`distance${deviceId}`).innerHTML =
+//         data[0].distance_in_kms.toFixed(2);
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//     });
+// }
 
 function fetchDeviceIds(customerId, authToken) {
   fetch(
@@ -442,20 +1021,33 @@ function fetchDeviceIds(customerId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log("Success:", data);
+      // console.log("Success:", data);
       optionsTemplet = ``;
+      data = data.sort((a, b) => {
+        if (a.device_id < b.device_id) return -1;
+        if (a.device_id > b.device_id) return 1;
+        return 0;
+      });
+      // console.log("sortedData", data);
+
       data.forEach((element) => {
         optionsTemplet += `<option value="${element.device_id}">${element.device_id}</option>`;
       });
       document.getElementById("devices").innerHTML = optionsTemplet;
-      //let currentDeviceId = localStorage.getItem("selectedDeviceId");
-      //if (!currentDeviceId) {
-      //    localStorage.setItem("selectedDeviceId", data[0].device_id);
-      //}
-      //document.getElementById("devices").value =
-      // localStorage.getItem("selectedDeviceId");
+      let currentDeviceId = localStorage.getItem("allDevicesSelectedDeviceId");
+      if (!currentDeviceId) {
+        localStorage.setItem("allDevicesSelectedDeviceId", data[0].device_id);
+      }
+      document.getElementById("devices").value = localStorage.getItem(
+        "allDevicesSelectedDeviceId"
+      );
     })
     .catch((error) => {
       console.error("Error:", error);
     });
 }
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("devices").addEventListener("change", function () {
+    localStorage.setItem("allDevicesSelectedDeviceId", this.value);
+  });
+});

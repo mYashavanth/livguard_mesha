@@ -1,314 +1,246 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const dashboardContainer = document.getElementById("dashboardContainer");
-  const authToken = localStorage.getItem("authToken");
-  const savedDeviceId = localStorage.getItem("selectedDeviceId") || "MESH0001";
-  function fetchData(deviceId) {
-    console.log({ deviceId, authToken });
-    fetch(
-      `https://dms.meshaenergy.com/apis/dashboard/primary-data/${deviceId}/${authToken}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-        data = data[0];
-        dashboardContainer.innerHTML = `
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="ds_ttl_blk">
-          <h1 class="dh1">Device Parameters</h1>
-          <p class="dp1">
-            View/download detailed device parameters for multiple data points
-          </p>
-        </div>
-      </div>
-    </div>
+function currentStatus(date, time) {
+  const deviceLogDate = date; // e.g., "09/10/2024"
+  const logTime = time; // e.g., "23:38"
+  // console.log(date, time);
 
-    <div
-      class="container-fluid mb-3"
-      style="border-top: 1px solid #4a5154; opacity: 30%"
-    ></div>
+  // Get the current date and time components separately
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // months are 0-based
+  const currentDay = currentDate.getDate();
+  const currentHours = currentDate.getHours();
+  const currentMinutes = currentDate.getMinutes();
 
-    <div class="d-flex justify-content-between">
-      <div class="card-container">
-        <div class="d-flex align-items-center">
-          <h1 class="dh1 lr_margin_10">Customer Name - <span id="vendorName"></span></h1>
-          <div class="color_box lr_margin_10" style="background-color: #00b562">
-            <p>Online</p>
-          </div>
-          
-          <div class="verticle_divide lr_margin_10"></div>
-          <h1 class="dh1 lr_margin_10">Device Id-
-            <select id="devices" name="devices" style="border: none; outline: none">
-              <option value="MESH0000">MESH____</option>
-              
-            </select>
-          </h1>
-          
+  // Parse the deviceLogDate and time separately
+  const [logDay, logMonth, logYear] = deviceLogDate.split("/").map(Number); // "MM/DD/YYYY" format
+  const [logHours, logMinutes] = logTime.split(":").map(Number); // "HH:MM" format
 
-          <!--<div class="verticle_divide lr_margin_10"></div>
-          <h1 class="dh1 lr_margin_10">Alert</h1>
-          <div
-            class="round_container lr_margin_10"
-            style="background-color: #00b562"
-          ></div>-->
-          <div class="verticle_divide lr_margin_10"></div>
-          <h1 class="dh1 lr_margin_10">${
-            data.latest_updated_time
-          } ; ${formatDate(data.device_log_date)}</h1>
-        </div>
-      </div>
-      <button class="btn" style="background-color: #00b562; color: white" onclick="window.location.href='alldevices.html'">
-        Export Data Log
-      </button>
-      <a id="downloadLink" style="display: none;"></a>
-    </div>
+  let statusText = "Online";
+  let backgroundColor = "rgb(213, 255, 213)"; // Green background
 
-    <section class="mt-3">
-      <!-- <div class="container-fluid"> -->
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">Voltage 1 (B1)</h5>
-              <h6 class="ds_crd_h6">${data.v1}</h6>
-              <!-- <p class="ds_crd_p2">
-                  <i class="bi bi-arrow-up-short"></i> 6.7% Increase
-                </p> -->
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg1">
-              <img
-                src="assets/img/voltage.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
+  // Compare the dates
+  if (
+    logYear < currentYear ||
+    (logYear === currentYear && logMonth < currentMonth) ||
+    (logYear === currentYear &&
+      logMonth === currentMonth &&
+      logDay < currentDay)
+  ) {
+    // Device date is in the past
+    statusText = "Offline";
+    backgroundColor = "#EFEFEF";
+  } else if (
+    logYear === currentYear &&
+    logMonth === currentMonth &&
+    logDay === currentDay
+  ) {
+    // If the date is today, compare the times
+    const timeDifference =
+      (currentHours - logHours) * 60 + (currentMinutes - logMinutes); // difference in minutes
 
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">Voltage 2 (B2)</h5>
-              <h6 class="ds_crd_h6">${data.v2}</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg2">
-              <img
-                src="assets/img/voltage.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">Voltage 3 (B3)</h5>
-              <h6 class="ds_crd_h6">${data.v3}</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg3">
-              <img
-                src="assets/img/voltage.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">Voltage 4 (B4)</h5>
-              <h6 class="ds_crd_h6">${data.v4}</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg4">
-              <img
-                src="assets/img/voltage.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- </div> -->
-    </section>
-
-    <section class="mt-3">
-      <!-- <div class="container-fluid"> -->
-      
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">Battery BANK VOLTAGE</h5>
-              <h6 class="ds_crd_h6">${(
-                Number(data.v1) +
-                Number(data.v2) +
-                Number(data.v3) +
-                Number(data.v4)
-              ).toFixed(2)}</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg4">
-              <img
-                src="assets/img/voltage.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">CURRENT (A)</h5>
-              <h6 class="ds_crd_h6">${data.current}</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg2">
-              <img
-                src="assets/img/current.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">TEMPERATURE (T)</h5>
-              <h6 class="ds_crd_h6">${data.temperature} C</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg4">
-              <img
-                src="assets/img/temperature.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">Instantaneous Speed (KMPH)</h5>
-              <h6 class="ds_crd_h6">${data.speed}</h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg4">
-              <img
-                src="assets/img/speed.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- </div> -->
-    </section>
-
-    <section class="mt-3">
-      <!-- <div class="container-fluid"> -->
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="d-flex dsh_crd_bg">
-            <div class="">
-              <h5 class="ds_crd_p1">DISTANCE (KM)</h5>
-              <h6 class="ds_crd_h6" id="distance"></h6>
-            </div>
-            <div class="dsh_crd_icn_blk dsh_icn_bg4">
-              <img
-                src="assets/img/distance.svg"
-                class="img-fluid dsh_crd_icn"
-                style="margin-top: -8px"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- </div> -->
-    </section>
-
-    <!-- card -->
-
-    <div
-      class="container-fluid mb-3 mt-3"
-      style="border-top: 1px solid #4a5154; opacity: 30%"
-    ></div>
-
-    <!-- table-top -->
-    <div class="col">
-      <div
-        class="container-fluid"
-        style="
-          background-color: white;
-          padding-left: 5px;
-          padding-top: 3px;
-          padding-bottom: 3px;
-          border-top-left-radius: 8px;
-          border-top-right-radius: 8px;
-        "
-      >
-        <h1 class="dh1">Map View</h1>
-        <div id="map" style="height: 700px; width: 100%;"></div>
-      </div>
-    </div>`;
-        customers = ["Livguard", "Mesha", "Race", "Korakso"];
-        deviceId = localStorage.getItem("selectedDeviceId");
-        customerId = localStorage.getItem("customerId");
-        document.getElementById("vendorName").innerHTML =
-          customers[parseInt(customerId) - 1];
-        console.log("deviceId", deviceId);
-        fetchDistance(deviceId, authToken);
-        fetchDeviceIds(customerId, authToken);
-        initMap(data.lat, data.long);
-        let selectDevice = document.getElementById("devices");
-        selectDevice.addEventListener("change", (event) => {
-          localStorage.setItem("selectedDeviceId", event.target.value);
-          fetchData(event.target.value);
-        });
-        // export data
-        let exportDataBtn = document.getElementById("exportDataBtn");
-        exportDataBtn.addEventListener("click", function () {
-          console.log("clicked");
-          const link = document.getElementById("downloadLink");
-          link.href = `https://dms.meshaenergy.com/apis/download/csv/today/${authToken}`;
-          link.click();
-        });
-        // export data
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
-  fetchData(savedDeviceId);
-  // setInterval(function () {
-  //   fetchData(savedDeviceId);
-  // }, 30000);
-  setInterval(function () {
-    const currentDeviceId = localStorage.getItem("selectedDeviceId");
-    if (currentDeviceId) {
-      fetchData(currentDeviceId);
+    if (timeDifference >= 5) {
+      statusText = "Offline";
+      backgroundColor = "#EFEFEF";
     }
-  }, 30000);
-  let selectDevice = document.getElementById("devices");
-  let selectDeviceId = localStorage.getItem("selectedDeviceId");
-  if (selectDeviceId) {
-    selectDevice.value = selectDeviceId;
   }
-  selectDevice.addEventListener("change", (event) => {
-    localStorage.setItem("selectedDeviceId", event.target.value);
-    fetchData(event.target.value);
-    fetchDistance(localStorage.getItem("selectedDeviceId"), authToken);
-  });
+
+  return `<span style="color: ${
+    statusText === "Online" ? "#0D5E36" : "gray"
+  };  border: 1px solid ${
+    statusText === "Online" ? "#0D5E36" : "gray"
+  }; padding: 0 5px; border-radius: 5px; background-color: ${backgroundColor}">${statusText}</span>`;
+}
+
+async function getTempDataForAlert() {
+  const authToken = localStorage.getItem("authToken");
+  const voltageApiUrl = `https://dms.meshaenergy.com/apis/voltage-settings/${authToken}`;
+
+  try {
+    const response = await fetch(voltageApiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) throw new Error(`Error: ${response.status}`);
+
+    const volData = await response.json();
+    console.log(volData);
+    if (volData.errFlag == 1) {
+      throw new Error(`Error: ${volData.message}`);
+    }
+    if (volData.length === 0) {
+      return null;
+    }
+
+    return volData[0];
+  } catch (error) {
+    console.error("Error fetching voltage settings:", error);
+    return null;
+  }
+}
+
+function toSetAlert(tempAlerData, params) {
+  const alertDiv = document.createElement("div");
+
+  if (!tempAlerData) {
+    // If empty, display a gray circle
+    alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: gray; border-radius: 50%;"></span>`;
+    return alertDiv;
+  }
+
+  const { v1, v2, v3, v4, current, speed } = params;
+
+  // Function to check if a value is outside the range
+  const checkAlert = (value, low, high) =>
+    value < parseFloat(low) || value > parseFloat(high);
+
+  // Check if any voltage exceeds the allowed limit of 18
+  const isVoltageWrong = [v1, v2, v3, v4].some((voltage) => voltage > 18);
+
+  // Check if both speed and current are greater than 5
+  const isWrongConnection = speed > 5 && current > 5;
+
+  const isAlert = [
+    checkAlert(v1, tempAlerData.v1_low, tempAlerData.v1_high),
+    checkAlert(v2, tempAlerData.v2_low, tempAlerData.v2_high),
+    checkAlert(v3, tempAlerData.v3_low, tempAlerData.v3_high),
+    checkAlert(v4, tempAlerData.v4_low, tempAlerData.v4_high),
+  ].some(Boolean);
+
+  const allZero = [
+    "v1_high",
+    "v1_low",
+    "v2_high",
+    "v2_low",
+    "v3_high",
+    "v3_low",
+    "v4_high",
+    "v4_low",
+  ].every((key) => parseFloat(tempAlerData[key]) === 0);
+
+  if (isVoltageWrong || isWrongConnection) {
+    alertDiv.innerHTML = `<span style="color: red; font-weight: bold; letter-spacing: 1px">Wrong Connection</span>`;
+  } else if (allZero) {
+    alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: gray; border-radius: 50%;"></span>`;
+  } else {
+    alertDiv.innerHTML = `<span style="display: inline-block; width: 12px; height: 12px; background-color: ${
+      isAlert ? "red" : "green"
+    }; border-radius: 50%;"></span>`;
+  }
+
+  return alertDiv;
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const tempAlerData = await getTempDataForAlert();
+  const authToken = localStorage.getItem("authToken");
+  const savedDeviceId = localStorage.getItem("selectedDeviceId") || "0001";
+  const customers = ["Livguard", "Mesha", "Race", "Korakso"];
+  const selectDevice = document.getElementById("devices");
+  fetchDeviceIds(authToken);
+
+  // Utility function to fetch data
+  async function fetchData(deviceId) {
+    try {
+      const response = await fetch(
+        `https://dms.meshaenergy.com/apis/dashboard/primary-data/${deviceId}/${authToken}`,
+        { method: "GET" }
+      );
+      let data = await response.json();
+      console.log({ data, deviceId });
+
+      data = data[0] || {
+        latest_updated_time: "00:00",
+        device_log_date: new Date(),
+        v1: "0",
+        v2: "0",
+        v3: "0",
+        v4: "0",
+        current: "0",
+        temperature: "0",
+        speed: "0",
+      };
+
+      updateDashboard(data);
+      fetchDistance(deviceId, authToken);
+      initMap(data.lat, data.long);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  // Update dashboard elements
+  function updateDashboard(data) {
+    document.getElementById("statusDiv").innerHTML = `${currentStatus(
+      formatDate(data.device_log_date),
+      data.latest_updated_time
+    )} ${
+      toSetAlert(tempAlerData, {
+        v1: data.v1,
+        v2: data.v2,
+        v3: data.v3,
+        v4: data.v4,
+        speed: data.speed,
+        current: data.current,
+      }).outerHTML
+    }`;
+
+    document.getElementById("timeAndDate").textContent = `${
+      data.latest_updated_time
+    } ; ${formatDate(data.device_log_date)}`;
+    document.getElementById("v1").textContent = data.v1;
+    document.getElementById("v2").textContent = data.v2;
+    document.getElementById("v3").textContent = data.v3;
+    document.getElementById("v4").textContent = data.v4;
+
+    document.getElementById("totalVoltage").textContent = (
+      Number(data.v1) +
+      Number(data.v2) +
+      Number(data.v3) +
+      Number(data.v4)
+    ).toFixed(2);
+
+    document.getElementById("current").textContent = data.current;
+    document.getElementById("temperature").textContent = data.temperature;
+    // document.getElementById("version").textContent = data.device_version_no;
+    document.getElementById("speed").textContent =
+      data.current > 5 ? 0 : data.speed;
+
+    const customerId = localStorage.getItem("customerId");
+    document.getElementById("vendorName").textContent =
+      customers[parseInt(customerId) - 1] || "Unknown Vendor";
+  }
+
+  // Handle device selection changes
+  async function handleDeviceChange(event) {
+    const deviceId = event.target.value;
+    localStorage.setItem("selectedDeviceId", deviceId);
+    fetchData(deviceId);
+    await initializeChart();
+  }
+
+  // Initialize
+  function initialize() {
+    if (savedDeviceId) {
+      selectDevice.value = savedDeviceId;
+    }
+
+    selectDevice.addEventListener("change", handleDeviceChange);
+
+    // Periodic updates
+    setInterval(() => {
+      const currentDeviceId = localStorage.getItem("selectedDeviceId");
+      if (currentDeviceId) {
+        fetchData(currentDeviceId);
+      }
+    }, 60000);
+
+    fetchData(savedDeviceId);
+  }
+
+  initialize();
 });
 
 // AIzaSyDP1O86frM0Al9QspBpJqN06wTB2AM5yZQ
@@ -317,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function checkAuth() {
   const token = localStorage.getItem("authToken");
   if (!token) {
-    window.location.href = "index.html";
+    window.location.href = "/";
   }
 }
 window.onload = checkAuth;
@@ -326,7 +258,7 @@ window.onload = checkAuth;
 document.getElementById("logoutBtn").addEventListener("click", function () {
   localStorage.removeItem("authToken");
   localStorage.clear();
-  window.location.href = "index.html";
+  window.location.href = "/";
 });
 
 function convertToDecimalDegrees(coordinate) {
@@ -340,7 +272,7 @@ function convertToDecimalDegrees(coordinate) {
   return decimalDegrees;
 }
 function initMap(lat, lng) {
-  console.log(lat, Number(lng));
+  // console.log(lat, Number(lng));
   const location = {
     lat: convertToDecimalDegrees(Number(lat)),
     lng: convertToDecimalDegrees(Number(lng)),
@@ -376,7 +308,8 @@ function formatDate(dateString) {
   return `${formattedDay}/${formattedMonth}/${year}`;
 }
 
-function fetchDeviceIds(customerId, authToken) {
+function fetchDeviceIds(authToken) {
+  customerId = localStorage.getItem("customerId");
   fetch(
     `https://dms.meshaenergy.com/apis/devices/all/${customerId}/${authToken}`,
     {
@@ -385,7 +318,12 @@ function fetchDeviceIds(customerId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log("Success:", data);
+      // console.log("Success:", data);
+      data = data.sort((a, b) => {
+        if (a.device_id < b.device_id) return -1;
+        if (a.device_id > b.device_id) return 1;
+        return 0;
+      });
       optionsTemplet = ``;
       data.forEach((element) => {
         optionsTemplet += `<option value="${element.device_id}">${element.device_id}</option>`;
@@ -395,6 +333,7 @@ function fetchDeviceIds(customerId, authToken) {
       let currentDeviceId = localStorage.getItem("selectedDeviceId");
       if (!currentDeviceId) {
         localStorage.setItem("selectedDeviceId", data[0].device_id);
+        window.location.reload();
       }
       document.getElementById("devices").value =
         localStorage.getItem("selectedDeviceId");
@@ -408,7 +347,7 @@ function fetchDistance(deviceId, authToken) {
   /*if (!deviceId) {
     deviceId = "MESH2099";
   }*/
-  console.log(deviceId, authToken);
+  // console.log(deviceId, authToken);
   fetch(
     `https://dms.meshaenergy.com/apis/distance-travelled/${deviceId}/${authToken}`,
     {
@@ -417,7 +356,7 @@ function fetchDistance(deviceId, authToken) {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log("Success:", data);
+      // console.log("Success:", data);
       document.getElementById("distance").innerHTML =
         data[0].distance_in_kms.toFixed(2);
     })
@@ -425,16 +364,42 @@ function fetchDistance(deviceId, authToken) {
       console.error("Error:", error);
     });
 
-  chargeDischargeDisplay(
-    localStorage.getItem("selectedDeviceId"),
-    localStorage.getItem("authToken")
-  );
+  // chargeDischargeDisplay(
+  //   localStorage.getItem("selectedDeviceId"),
+  //   localStorage.getItem("authToken")
+  // );
 }
 
 chargeDischargeDisplay(
   localStorage.getItem("selectedDeviceId"),
   localStorage.getItem("authToken")
 );
+document.getElementById("changeDischargeRefresh").onclick = function () {
+  chargeDischargeDisplay(
+    localStorage.getItem("selectedDeviceId"),
+    localStorage.getItem("authToken")
+  );
+};
+function convertTime(hours) {
+  const totalMinutes = hours * 60;
+  const hoursPart = Math.floor(totalMinutes / 60);
+  const minutesPart = Math.round(totalMinutes % 60);
+
+  return `${hoursPart}h, ${minutesPart}min`;
+}
+function formatDateTime(dateTimeString) {
+  const date = new Date(dateTimeString);
+
+  // Extract individual components
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  // Format and return the result
+  return `${day}-${month}-${year} ${hours}:${minutes}`;
+}
 
 function chargeDischargeDisplay(deviceId, authToken) {
   var tableBody = document.getElementById("data-table-body");
@@ -455,13 +420,18 @@ function chargeDischargeDisplay(deviceId, authToken) {
         const row = `
                     <tr>
                         <td>${item["Cycle Type"]}</td>
-                        <td>${item["Date Time - From"]}</td>
-                        <td>${item["Date Time - To"]}</td>
+                        <td>${formatDateTime(item["Date Time - From"])}</td>
+                        <td>${formatDateTime(item["Date Time - To"])}</td>
                         <td>${item["Distance Travelled"]}</td>
-                        <td>${item["Duration - Hours"]}</td>
+                        <td>${convertTime(item["Duration - Hours"])}</td>
                         <td>${item["Temperature - Max"]}</td>
                         <td>${item["Temperature - Min"]}</td>
-                        <td>${item["ah"]}</td>
+                        <td>${
+                          item["Cycle Type"] == "Charging" ? item["ah"] : ""
+                        }</td>
+                        <td>${
+                          item["Cycle Type"] == "Discharging" ? item["ah"] : ""
+                        }</td>
                         <td>${item["b1"]}</td>
                         <td>${item["b2"]}</td>
                         <td>${item["b3"]}</td>
